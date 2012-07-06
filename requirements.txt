@@ -1,0 +1,10 @@
+BeautifulSoup==3.2.0
+Jinja2==2.6
+PyDispatcher==2.0.3
+distribute==0.6.27
+nose==1.1.2
+pymongo==2.1.1
+python-money==0.5
+simplejson==2.6.0
+tornado==2.3
+wsgiref==0.1.2
