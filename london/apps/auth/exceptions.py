@@ -1,1 +1,0 @@
-class AuthenticationFailed(BaseException): pass
