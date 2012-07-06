@@ -10,7 +10,9 @@ from london.sse import server_sent_event_source
 from london.apps.ajax.tags import redirect_to
 from london import forms
 
-from models import Votes, SEAWALL
+from models import Votes
+from models import SEAWALL
+
 
 class HomeForm(forms.ModelForm):
     class Meta:

@@ -10,6 +10,7 @@ admin.site.root_url = '/admin/'
 admin.site.load_from_applications()
 admin.site.ajax_site = ajax.site
 
+
 if settings.LOCAL:
     url_patterns = patterns('', url_serve(settings.STATIC_URL[1:], settings.STATIC_ROOT))
 
