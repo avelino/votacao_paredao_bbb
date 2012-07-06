@@ -1,11 +1,32 @@
-﻿{% base "base.html" %}
+{% base "base.html" %}
 
 {% piece "content" %}
-<form style="display: inline;" action="/" method="post">
-  {{ form }}
-  <button type="submit" title="Go to URL" name="go">Go!</button>
-</form>
-<script>
-</script
+  <h1 class="top">QUEM DEVE SER <strong>ELIMINADO</strong>?</h1>
+  <div class="clear">
+    <div class="box">
+      <p>Participante 1<p/>
+      <img class="select_vote" src="{{ STATIC_URL }}x.png" width="267" height="275" rel="1" />
+    </div>
+    <div class="box">
+      <p>Participante 2<p/>
+      <img class="select_vote" src="{{ STATIC_URL }}y.png" width="267" height="275" rel="2" />
+    </div>
+  </div>
+  <form class="clear" id="vote-form" action="/result/" method="post">
+    {{ form.error }}
+    {{ form }}
+    <button id="vote" type="submit" name="vote"></button>
+  </form>
+
+
+  <script>
+    ;$(".select_vote").click(function () {
+      $(".select_vote").removeClass('selected');
+      i = $(this)
+      i.addClass('selected');
+      $("form [name=result]").val(i.attr('rel'))
+    });
+  </script>
 {% endpiece %}
+
 
