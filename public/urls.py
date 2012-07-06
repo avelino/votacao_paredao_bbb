@@ -16,6 +16,7 @@ if settings.LOCAL:
 
 url_patterns += patterns('public.views',
     (r'^$', 'HomeForm', {}, 'home'),
+    (r'^result/$', 'Result', {}, 'result'),
     (r'^ajax/', include(ajax.site.urls)),
     (r'^admin/', include(admin.site.urls)),
     )
