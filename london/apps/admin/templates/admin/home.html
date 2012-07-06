@@ -1,0 +1,58 @@
+{% base "admin/base.html" %}
+
+{% piece "title" %}Admin{% endpiece %}
+
+{% piece "sidebar" %}
+<div id="user-ribbon">
+    <a href="{{ admin_site.root_url }}" class="username">{{ user.get_full_name() }}</a> <a href="{{ admin_site.root_url }}logout/" class="logout" rel="nohistory">Sign out</a>
+    <a href="{{ admin_site.root_url }}change-password/" class="change-password">Password</a>
+</div>
+
+<ul id="site-selector">
+	<li {% if not admin_selected_site %}class="selected"{% endif %}>
+		<a href="/admin/set/site/-unselect-/" class="no-site-selected" rel="nohistory">No site selected</a>
+	</li>
+    {% for site in admin_site.get_sites() %}
+	    {% if admin_selected_site == site.pk %}
+	    	<li class="site selected">
+	    {% else %}
+	    	<li class="site">
+	    {% endif %}
+    	
+    	<a href="/admin/set/site/{{ site.pk }}/" rel="nohistory">{{ site.name }}</a></li>
+    {% endfor %}
+</ul>
+
+<div id="module-selector">
+    <input type="text" autocomplete="off" placeholder="search module..."/>
+</div>
+
+<ul id="side-nav">
+    {% for app in applications %}
+    <li class="app">
+        <a href="javascript:void(0)" class="show-application">{{ app.get_title() }}</a>
+        <ul class="modules">
+            {% for module in app.get_modules() %}
+            <li class="module-item"><a href="{{ module.url }}">{{ module.get_title() }}</a></li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+
+<script>
+	$('#site-selector a').click(function(){
+		var a = $(this);
+		
+		$.get(a.attr('href'), {'goto':top.location.pathname}, function(response){
+			if(response.status != "ok") return;
+			
+			$('#site-selector li').removeClass('selected')
+			a.parent().addClass('selected');
+			if(response.redirect != "") top.location.href = response.redirect;
+		});
+		return false;
+	});
+</script>
+{% endpiece %}
+

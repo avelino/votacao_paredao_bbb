@@ -1,0 +1,18 @@
+{% base "admin/base.html" %}
+
+{% piece "title" %}Login in {% endpiece %}
+
+{% piece "login" %}
+<div id="login-wrap">
+	<form method="post" id="login-form" action="{{ form.path_info }}" rel="nohistory">
+		{{ form }}
+		<input type="submit" value="Login"/>
+	</form>
+</div>
+
+<script>
+    $('#login-wrap').find('input[type=text]:first').focus();
+</script>
+{% endpiece %}
+
+

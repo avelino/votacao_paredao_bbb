@@ -1,0 +1,58 @@
+{% extends "debug/base.html" %}
+
+{% block title %}{{ exception.name }}: {{ exception.message|truncate(50) }}{% endblock %}
+
+{% block h1 %}{{ exception.name }}: {{ exception.message|truncate(50) }}{% endblock %}
+
+{% block content %}
+{% block subcontent %}
+<div id="sub_content">
+    {{ exception.message }}
+</div>
+{% endblock %}
+
+<h2>Traceback</h2>
+<pre id="traceback">{{ traceback_string }}</pre>
+<hr/>
+
+{% if heap_string %}
+<h2>Memory Heap</h2>
+<pre id="heap">{{ heap_string }}</pre>
+<hr/>
+{% endif %}
+
+{% if process_info %}
+<h2>Process Info</h2>
+<ul id="process-info">
+    {% for key, value in process_info %}<li>{{ key }}: {{ value }}</li>{% endfor %}
+</ul>
+<hr/>
+{% endif %}
+
+<h2>Headers (request.META)</h2>
+<table class="request_headers">
+    {% for k,v in request.META.items() %}
+    <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+    {% endfor %}
+</table>
+
+{% if request.GET %}
+<hr/>
+<h2>request.GET</h2>
+<table class="request_headers">
+    {% for k,v in request.GET.items() %}
+    <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if request.POST %}
+<hr/>
+<h2>request.POST</h2>
+<table class="request_headers">
+    {% for k,v in request.POST.items() %}
+    <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

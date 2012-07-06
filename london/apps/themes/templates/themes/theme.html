@@ -1,0 +1,297 @@
+{% extends "themes/base.html" %}
+
+{% piece "extra_head" %}
+<style>
+    body {font-family:arial,helvetica; margin:0;}
+    h1 {font-size:1.2em; padding:5px; background:#def; margin:0; height:25px;}
+    h1:hover {background:#ffc; padding:4px; border:1px solid #cc9;}
+    h2 {font-size:1.1em; padding:5px; background:#ddf7ff; margin:0;}
+    h1 a {font-size:0.8em; float:right; font-weight:normal; margin-left:10px;}
+    iframe#up-file { height:30px; margin:0; padding:0; border:0; }
+    #sidebar {position:absolute; top:0; left:0; bottom:0; width:300px; overflow:hidden;}
+    ul#templates, ul#static-files {margin:0; padding:5px; overflow-x:hidden; overflow-y:scroll; height:250px;}
+    ul#templates li, ul#static-files li {list-style:none; overflow:hidden; padding:2px; font-size:0.8em;}
+    ul#templates li:hover, ul#static-files li:hover {background:#eec;}
+    ul#templates li a, ul#static-files li a {display:block; width:100%;}
+    #editor {position:absolute; top:35px; right:0; bottom:0; left:300px;}
+    #viewer {position:absolute; top:35px; right:0; left:300px; overflow:hidden;}
+    #viewer .inner {margin:10px;}
+    #current {position:absolute; top:0; right:0; height:35px; left:300px; overflow:hidden;}
+    #current #item-type, #current #item-name {margin:5px; float:left;}
+    #current #save, #current #delete-item {float:right; margin:5px; display:none;}
+    #new-template, #new-static-file, #new-static-url {font-size:0.8em; float:right; margin-left:10px; font-weight:normal;}
+    #menu-theme {margin:5px; padding:0; overflow:hidden; font-size:0.8em;}
+    #menu-theme li {list-style:none; float:left; display:block; margin-right:5px;}
+    iframe#up-theme {width:150px; height:15px; margin:0; padding:0; border:0; float:left;}
+</style>
+{% endpiece %}
+
+{% piece "content" %}
+<div id="middle">
+    <div id="sidebar">
+        {% if showing_menu %}
+        <h1 title="Click to rename">Theme: {{ theme }}</h1>
+        <ul id="menu-theme">
+            <li><a href="/themes/">All</a></li>
+            <li><a href="javascript:void(0)" id="delete-theme">Delete</a></li>
+            <li>{% if theme.is_default %}Is Default
+        	    {% else %}<a href="/themes/{{ theme.name }}/set-default/">Set Default</a>{% endif %}</li>
+	        <li><a href="/themes/{{ theme.name }}/preview" target="__blank">Preview</a></li>
+            <li><a href="javascript:void(0)" id="save-as">Save as</a></li>
+        {#</ul>
+        {% else %}
+        <ul id="menu-theme">#}
+            <li><a href="/themes/{{ theme.name }}/download/" id="download-theme">Download</a></li>
+            <li><iframe src="/themes/{{ theme.name }}/upload/" id="up-theme" scrolling="no"></iframe></li>
+        </ul>
+        {% endif %}
+
+        <h2>Templates<a href="javascript:void(0)" id="new-template">New</a></h2>
+        <ul id="templates">
+            {% for template in theme.templates %}
+            <li id="template-{{ template.pk }}">
+                <a href="javascript:void(0)" class="edit" rel="template-{{ template.pk }}">{{ template }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Static Files
+            <a href="javascript:void(0)" id="new-static-file">New File</a>
+            <a href="javascript:void(0)" id="new-static-url">New URL</a></h2>
+        <iframe src="/themes/{{ theme.name }}/up-file/" id="up-file" scrolling="no"></iframe>
+        <ul id="static-files">
+            {% for sf in theme.static_files %}
+            <li id="static-{{ sf.get_type() }}-{{ sf.pk }}">
+                <a href="javascript:void(0)" class="edit" rel="static-{{ sf.get_type() }}-{{ sf.pk }}">{{ sf }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="current">
+        <span id="item-type"></span>
+        <span id="item-name">editor is empty</span>
+        <input type="button" value="Delete" id="delete-item"/>
+        <input type="button" value="Save" id="save"/>
+    </div>
+
+    <div id="editor"></div>
+    <div id="viewer"></div>
+</div>
+
+{% body_scripts "ajax:jquery,themes:ace,themes:mode-html,themes:mode-javascript,themes:mode-css" %} {# themes:worker-javascript,themes:worker-css #}
+
+<script>
+    function add_template_to_list(pk, name) {
+        var li = $('<li id="template-'+pk+'"><a href="javascript:void(0)" class="edit" rel="template-'+pk+'">'+name+'</a></li>')
+            .appendTo('#templates');
+        li.find('a').click(edit_click);
+        return li;
+    }
+
+    function add_static_file_to_list(pk, name, url, type) {
+        var li = $('<li id="static-'+type+'-'+pk+'"><a href="javascript:void(0)" class="edit" rel="static-'+type+'-'+pk+'">'+name+'</a></li>')
+            .appendTo('#static-files');
+        li.find('a').click(edit_click);
+        return li;
+    }
+
+    function edit_click() {
+        var edit = $(this);
+        var url = '/themes/{{theme.name}}/edit-child/?rel='+edit.attr('rel');
+        $.get(url, function(resp) {
+            if (typeof resp == 'string' && resp.indexOf('{') == 0) resp = JSON.parse(resp);
+
+            if (edit.attr('rel').indexOf('template') == 0) {
+                $('#item-type').text('Template: ').data('type', 'template');
+            } else if (edit.attr('rel').indexOf('static-url') == 0) {
+                $('#item-type').text('Static URL: ').data('type', 'static-url');
+            } else {
+                $('#item-type').text('Static File: ').data('type', 'static-file');
+            }
+            $('#item-name').text(edit.text());
+
+            if (typeof resp == 'string') {
+                var pos = resp.indexOf(')');
+                var type = resp.substring(5,pos);
+                editor.getSession().setValue(resp.substring(pos+1, resp.length));
+
+                editor.getSession().setMode(new HtmlMode());
+
+//                if (type == 'html') {
+//                    editor.getSession().setMode(new HtmlMode());
+//                } else if (type == 'js') {
+//                    editor.getSession().setMode(new JavaScriptMode());
+//                } else if (type == 'css') {
+//                    editor.getSession().setMode(new CssMode());
+//                } else {
+//                    editor.getSession().setMode(new TextMode());
+//                }
+
+                $('#viewer').fadeOut();
+                $('#editor').fadeIn().animate({top:35}, 500, function(){ editor.resize(); });
+                $('#save').fadeIn();
+            } else {
+                $('#viewer').empty();
+                var inner = $('<div class="inner"></div>').appendTo('#viewer');
+                if (resp.url) {
+                    $('<div>Link to: '+resp.url+'</div>').appendTo(inner);
+                } else {
+                    $('<div>Invalid file.</div>').appendTo(inner);
+                }
+
+                if (resp.mime_type.indexOf('image/') == 0) {
+                    $('<p style="text-align:center"><img src="'+resp.url+'"/></p>').appendTo(inner);
+                }
+                    
+                if (resp.url && (resp.mime_type.indexOf('text/') == 0 || resp.mime_type.indexOf('/javascript') >= 0)) {
+                    $.get(resp.url, function(resp){
+                        editor.getSession().setValue(resp);
+                        $('#editor').fadeIn().animate({top:70}, 500, function(){ editor.resize(); });
+                        $('#viewer').fadeIn();
+                    })
+                } else {
+                    $('#editor').fadeOut();
+                    $('#viewer').fadeIn();
+                }
+
+                $('#save').fadeOut();
+            }
+
+            $('#delete-item').fadeIn();
+        });
+    }
+
+    var HtmlMode = require("ace/mode/html").Mode;
+    var JavaScriptMode = require("ace/mode/javascript").Mode;
+    var CssMode = require("ace/mode/css").Mode;
+    var TextMode = require("ace/mode/text").Mode;
+    var editor = null;
+
+    $(document).ready(function(){
+        editor = ace.edit("editor");
+
+        editor.getSession().setMode(new HtmlMode());
+        editor.getSession().setTabSize(4);
+
+        $('.edit').click(edit_click);
+
+        $('#save').click(function(){
+            var item_name = $('#item-name').text();
+            var item_type = $('#item-type').data('type');
+            var url = '/themes/{{theme.name}}/edit-child/';
+            var params = {
+                name: item_name,
+                type: item_type,
+                content: editor.getSession().getValue()
+            }
+
+            $.post(url, params, function(resp){
+                alert('Saved with success.');
+            });
+        });
+
+        $('#delete-item').click(function(){
+            if (!confirm('Are you sure?')) return
+
+            var item_name = $('#item-name').text();
+            var item_type = $('#item-type').data('type');
+            var url = '/themes/{{theme.name}}/delete-child/';
+            var params = {name: item_name, type: item_type}
+
+            $.post(url, params, function(resp){
+                if (typeof resp == 'string') resp = JSON.parse(resp);
+                $('li#'+resp.info.type+'-'+resp.info.pk).remove();
+
+                $('#item-name').text('editor is empty');
+                $('#item-type').text('');
+                $('#save, #delete-item').fadeOut();
+                editor.getSession().setValue('');
+            });
+        });
+
+        $('#new-template').click(function(){
+            var name = prompt('Please inform the template name to create.');
+            if (!name) return
+
+            var url = '/themes/{{theme.name}}/create-template/';
+            var params = {'name': name};
+
+            $.post(url, params, function(resp){
+                if (typeof resp == 'string') resp = JSON.parse(resp);
+
+                if (resp.result == 'ok') {
+                    add_template_to_list(resp.info.pk, name).find('a').click();
+                } else {
+                    alert(resp.message);
+                }
+            });
+        });
+
+        $('#new-static-file').click(function(){
+            var name = prompt('Please inform the static file name to create.');
+            if (!name) return
+
+            var url = '/themes/{{theme.name}}/create-static-file/';
+            var params = {'name': name};
+
+            $.post(url, params, function(resp){
+                if (typeof resp == 'string') resp = JSON.parse(resp);
+
+                if (resp.result == 'ok') {
+                    add_static_file_to_list(resp.info.pk, name, resp.info.url, 'file').find('a').click();
+                } else {
+                    alert(resp.message);
+                }
+            });
+        });
+
+        $('#new-static-url').click(function(){
+            var new_url = prompt('Please inform the URL');
+            if (!new_url) return
+            var name = prompt('Now inform the NAME');
+            if (!name) return
+
+            var url = '/themes/{{theme.name}}/create-static-file/';
+            var params = {'name': name, 'url': new_url};
+
+            $.post(url, params, function(resp){
+                if (typeof resp == 'string') resp = JSON.parse(resp);
+
+                if (resp.result == 'ok') {
+                    add_static_file_to_list(resp.info.pk, name, resp.info.url, 'url');
+                } else {
+                    alert(resp.message);
+                }
+            });
+        });
+
+        $('#delete-theme').click(function(){
+            if (!confirm('Are you sure?')) return
+            window.location = '/themes/{{theme.name}}/delete/';
+        });
+
+        $('#save-as').click(function(){
+            var new_name = prompt('Set the new theme name');
+            if (!new_name) return;
+
+    	    $.post('/themes/{{ theme.name }}/save-as/', {'name':new_name}, function(resp){
+                if (typeof resp == 'string') resp = JSON.parse(resp);
+                window.location = resp.new_url;
+            });
+        });
+
+        $('h1').click(function(){
+            var h1 = $(this);
+            var new_name = prompt('Set a new name for this theme', h1.text().split(': ')[1]);
+            if (!new_name) return;
+
+            $.post('/themes/{{ theme.name }}/rename/', {'name':new_name}, function(resp){
+                if (typeof resp == 'string') resp = JSON.parse(resp);
+                window.location = resp.new_url;
+            });
+        });
+    });
+</script>
+{% endpiece %}
+

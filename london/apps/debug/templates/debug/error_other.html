@@ -1,0 +1,31 @@
+{% extends "debug/base.html" %}
+
+{% block title %}{{ status_code }} {{ status_string }}{% endblock %}
+{% block h1 %}{{ status_code }} {{ status_string }}{% endblock %}
+
+{% block content %}
+{% block subcontent %}
+<div id="sub_content">
+    '{{ status_code }} {{ status_string }}' error happened
+</div>
+{% endblock %}
+
+<h2>Traceback</h2>
+<pre id="traceback">{{ traceback_string }}</pre>
+<hr/>
+
+{% if heap_string %}
+<h2>Memory Heap</h2>
+<pre id="heap">{{ heap_string }}</pre>
+<hr/>
+{% endif %}
+
+{% if process_info %}
+<h2>Process Info</h2>
+<ul id="process-info">
+    {% for key, value in process_info %}<li>{{ key }}: {{ value }}</li>{% endfor %}
+</ul>
+<hr/>
+{% endif %}
+
+{% endblock %}
