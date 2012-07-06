@@ -1,0 +1,19 @@
+{% base "base.html" %}
+
+{% piece "title" %}Notifications in London.{% endpiece %}
+
+{% piece "content" %}
+<ul id="notifications">
+</ul>
+
+<script>
+    $('body').bind('notifications', function(e, messages){
+        for (var iMsg=0; iMsg<messages.length; iMsg++) {
+            if ($('li#'+messages[iMsg].id).length==0) {
+                $('<li id="'+messages[iMsg].id+'">'+messages[iMsg].message+'</li>').appendTo('#notifications');
+            }
+        }
+    });
+</script>
+{% endpiece %}
+

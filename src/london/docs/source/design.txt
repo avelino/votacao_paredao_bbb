@@ -1,0 +1,159 @@
+Design
+======
+
+Project, Services and Applications
+----------------------------------
+
+A sample project to illustrate:
+
+.. image:: illustrations/design-components.svg
+    :width: 750px
+
+The Project
+^^^^^^^^^^^
+
+Each project exists by its own. The minimum requirement for the project existance is a **settings.py** file,
+where the project settings are.
+
+The project directory usually includes as well other directories - Python packages - as its own services or
+applications. It's not required but according to its complexity, this is a natural way.
+
+Services
+^^^^^^^^
+
+**Usually**, most of web projects have at least two interfaces: the **public** and the **administration** 
+sites. Both use the same settings, applications, database, model classes and everything else. **Some** one 
+have as well an **api** or even and **asynchronous** service, sharing the same common components.
+
+However, those interfaces have clear differences on how they are published for the end user, for example:
+
+- The **public** service usually requires more browser compatibility, access from anywhere, caching and light
+  templates, some pages don't require user authentication, some static files can set a long expiration date;
+- The **administration** area usually requires more security control, sometimes restrict to specific IPs, 
+  sometimes supports more browser-specific resources, takes more memory and processor, requires more of user 
+  authentication and their permissions and is usually heavier;
+- An **api** service usually has not HTML templates, authenticates via OAuth, works with JSON or XML output 
+  and is even more restrictive, but most of times the access restriction is related to each consumer, most
+  of the middleware classes are not used, etc.
+
+That was just thoughts on most common cases, but that can be very diverse by projects. Some of them have no
+public service or an API. Every project has its own requirements and components set.
+
+That's why in this framework we believe those services must be maintained in separate, listening through 
+different  and isolated ports, running different instances. The web server (usually a proxy like Nginx) will
+be  responsible for point to the right ports for different hostnames or whatever. That makes each instance 
+isolated, publishing only its specific URLs, with customized settings (when necessary).
+
+By this way the sysadin will be able to optimize the web server configurations for each service for their
+specific requirements, including performance and security strategies.
+
+To set the project's services, you have to use the setting **SERVICES**, in **settings.py**. A new project is
+created by default including only the **public** service, and the only required module in a service is the 
+**urls.py**.
+
+Application
+^^^^^^^^^^^
+
+The application can be useful as well as a **plugin**, depending on how it is developed and used.
+
+An application is a Python package (usually a directory with modules inside) designed to solve a specific
+business topic, which includes its own model classes and those URLs, views, templates and other files.
+
+For example: in a **CRM software**, the project's aim is to maintain and organize **customer relationships**.
+This big topic can be very varied depending on the users needs and company size, but it can be broken in
+small and solid business topics, like: **customers** (customer's data and their validations), **contact**
+(functions on contacting people), **employees** (company's own staff information and internal control),
+**quality** (internal quality control), etc.
+
+Those business topics usually would be applications in a CRM project, as part of an organism. Futhermore,
+that project could need third part or external applications, like **billing** functions, for example.
+
+Those **billing** functions would be another application, maybe made by other company and installed via
+**pip** or another Git repository, whatever, anyway it would be another application.
+
+London supplies its own applications set, from package **london.apps**, including authentication,
+administration site, caching, mailing, etc.
+
+The framework recognises the project's installed applications through the setting **INSTALLED_APPS** in
+**settings.py** file. That can be a simple tuple with their package names, like below::
+
+    INSTALLED_APPS = (
+    	'london.apps.sites',
+    	'london.apps.sessions',
+    	'london.apps.auth',
+    	'customers',
+    	'quality',
+    	'billing',
+    	etc...
+    )
+
+It can be as well a tuple with tuples with keys for their aliases in this project and the value as their real
+paths, like below::
+
+    INSTALLED_APPS = (
+    	('sites', 'london.apps.sites'),
+    	('sessions', 'london.apps.sessions'),
+    	('auth', 'london.apps.auth'),
+    	'customers',
+    	'quality',
+    	'billing',
+    	etc...
+    )
+
+That turns possible to install a customized application in replacement to another with same name.
+
+Model, View, Controller
+-----------------------
+
+The original definition for **MVC design pattern** has been missed for a long time. True is that nowadays
+every framework claims theirselves as being MVC-compatible by their own ways. London follows its own way for
+doing it as well, but very similar to other web frameworks.
+
+.. image:: illustrations/design-mvc.svg
+    :width: 400px
+    :align: center
+
+Model
+^^^^^
+
+The **Model** layer in London is applications' model classes, contained in **models.py** packages (it can be
+a package as well if it needs). The model class defines in Python language, under London's rules a persistent
+entity stored (or to be stored) in the database. An instance of a model class is a unique object in database,
+including its own fields follwing the model class fields definition. For NoSQL databases, the framework
+allows objects with their own single fields as well.
+
+Each database engine defines its own way of persistence, data types for model fields and object storages.
+
+We understand as well the Model layer including objects methods, in special those related to their data
+integrity and processing.
+
+View
+^^^^
+
+The **View** layer in London is basically the view functions (usually in files called **view.py** in
+applications), template files, themes and forms (partially). A view component receives a **request**
+(**london.http.HttpRequest**) and returns a **response** (**london.http.HttpResponse**), in order to
+interface with users, browsers, printers and other output ends.
+
+Controller
+^^^^^^^^^^
+
+A little mixed with views, the **Controller** layer is the framework itself, middleware classes, template
+context processors, signal-connected functions, engine classes and forms (partially).
+
+The controller layer is the set of tools that connects everything and make them work together as an organism.
+
+Persistence layer
+^^^^^^^^^^^^^^^^^
+
+The persistence is the database itself. London sees them as just data storages. The intensity of database
+tools usage depends on the database engines and the framework just interact with them sending specific
+commands and receiving their responses.
+
+Requests and Responses
+----------------------
+
+Servers and Services
+--------------------
+
+

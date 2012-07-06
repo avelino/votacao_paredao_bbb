@@ -1,0 +1,161 @@
+SERVER CACHING
+==============
+
+    >>> import os
+    >>> import time
+    >>> from london.test.utils import assert_equal, assert_true, assert_false
+
+Application 'cache'
+-------------------
+
+This application is an important set of tools in London framework because it is a rich way to store processing results in
+cache in the server side, using specific caching software like Redis, Memcached, database, file system, memory, etc.
+
+It works using the design patterns Proxy and Adapter as main structures. This makes it able to be very simple to use in the
+same way it is powerful and flexible to be customized for non-expected functions.
+
+    >>> from london.apps.cache import cache
+
+The basic flow is:
+
+    ----------------          --------------          ----------------
+    |  cache.set   |--------->| CacheProxy |--------->| cache engine |---< store by its own way >
+    ----------------          --------------          ----------------
+
+    ----------------          --------------          ----------------
+    |  cache.get   |--------->| CacheProxy |--------->| cache engine |---< returns by its own way >
+    ----------------          --------------          ----------------
+
+    ----------------          --------------          ----------------
+    | cache.delete |--------->| CacheProxy |--------->| cache engine |---< deletes by its own way >
+    ----------------          --------------          ----------------
+
+Settings
+--------
+
+    >>> from london.conf import settings
+
+Setting for active storages: each enabled cache storage must have a unique name. The 'default' is recommended to exist to let
+functions to work without to set the cache to store everytime.
+
+In the case below we set the most basic way to cache values, in memory
+
+    >>> settings.CACHE_STORAGES = {
+    ...     'default': {
+    ...         'engine': 'london.apps.cache.engines.LocalMemory',
+    ...     },
+    ... }
+
+Default timeout: every cache key must have an expiring time in seconds. This setting is to set the default expiring time.
+
+    >>> settings.CACHE_DEFAULT_TIMEOUT = 30 # 30 seconds
+
+Checking if the project settings replaced the default application settings
+
+    >>> from london.apps.cache import app_settings
+    >>> assert_equal(settings.CACHE_STORAGES, app_settings.STORAGES)
+    >>> assert_equal(settings.CACHE_DEFAULT_TIMEOUT, app_settings.DEFAULT_TIMEOUT)
+
+Storing and retrieving
+----------------------
+
+Every key has only one value per time. If an existing key already exists, its value is replaced for the new one. Any serializable
+value can be set.
+
+To store the value 'value' in the unique key 'key' for 5 seconds:
+
+    >>> cache.set('key', 'value', 1)
+    >>> assert_equal(cache.get('key'), 'value')
+
+    >>> cache.set('key', 'new-value', 1)
+    >>> assert_equal(cache.get('key'), 'new-value')
+
+Wait 3 seconds to test the expiring timeout
+
+    >>> time.sleep(2)
+    >>> assert_equal(cache.get('key'), None)
+
+Poping and deleting
+-------------------
+
+    >>> cache.set('age', 18)
+    >>> assert_equal(cache.get('age'), cache.pop('age'))
+    >>> assert_equal(cache.get('age'), None)
+
+    >>> cache.set('wage', 1200.00)
+    >>> cache.delete('wage')
+    >>> assert_equal(cache.get('wage'), None)
+
+Engines
+-------
+
+    >>> from london.apps.cache import CacheProxy
+
+Local Memory
+
+    >>> from london.apps.cache.engines import localmem
+    >>> assert_equal(localmem._store, {})
+
+Dummy
+
+    >>> settings.CACHE_STORAGES['dummy'] = {'engine': 'london.apps.cache.engines.Dummy'}
+    >>> cache = CacheProxy(settings.CACHE_STORAGES)
+    >>> cache['dummy'].set('brazilian-capital', 'Brasilia')
+    >>> cache['dummy'].get('brazilian-capital')
+
+File System
+
+    >>> fs_path = '/tmp/london-cache/'
+    >>> settings.CACHE_STORAGES['fs'] = {'engine': 'london.apps.cache.engines.LocalFileSystem', 'path': fs_path}
+    >>> cache = CacheProxy(settings.CACHE_STORAGES)
+    >>> cache['fs'].set('brazilian-capital', 'Brasilia')
+    >>> assert_equal(cache['fs'].get('brazilian-capital'), 'Brasilia')
+
+Redis
+------
+
+    >>> settings.CACHE_STORAGES['redis'] = {
+    ...     'engine': 'london.apps.cache.engines.Redis',
+    ...     'host': 'localhost',
+    ...     'port': 6379,
+    ...     'db': 99,
+    ... }
+    >>> cache = CacheProxy(settings.CACHE_STORAGES)
+    >>> try:
+    ...     cache['redis'].set('brazilian-capital', 'Brasilia')
+    ... except Exception, e:
+    ...     if e.__class__.__name__ not in ('ConnectionError','ImportError'):
+    ...         raise
+    ... else:
+    ...     assert_equal(cache['redis'].get('brazilian-capital'), 'Brasilia')
+
+Memoize
+
+TODO: in the future we will replace this function for the one with same name in Geraldo Reports, that is more flexible.
+
+    >>> from london.utils.functional import memoize
+
+    >>> def capitalize(sentence):
+    ...     print('Processing \'%s\''%sentence)
+    ...     return ' '.join([word.capitalize() for word in sentence.split()])
+
+Normal function
+
+    >>> capitalize('marinho brandao')
+    Processing 'marinho brandao'
+    'Marinho Brandao'
+
+Function wrapped by memoize
+
+    >>> _capitalize_cache = {}
+    >>> capitalize = memoize(capitalize, _capitalize_cache, 1)
+
+    >>> capitalize('tiago pita')
+    Processing 'tiago pita'
+    'Tiago Pita'
+
+Once more to use the cache in memory
+
+    >>> capitalize('tiago pita')
+    'Tiago Pita'
+

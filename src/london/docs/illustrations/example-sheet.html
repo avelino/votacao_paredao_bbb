@@ -1,0 +1,443 @@
+<!doctype html>
+<html>
+    <head>
+        <title>London Web Framework Example Cards</title>
+        <style>
+            body {
+                font-family: arial;
+                font-size: 0.35cm;
+                margin: 0;
+                padding: 0;
+            }
+
+            h1 {
+                margin: 0.2em;
+            }
+
+            .card {
+                margin: 0.8em;
+                border-radius: 0.7em;
+                float: left;
+                overflow: hidden;
+                background: #dec;
+                border: 0.2em solid green;
+                width: 15cm;
+                height: 9cm;
+            }
+
+            .card h3 {
+                font-size: 1.3em;
+                padding: 0.35em;
+                margin: 0;
+            }
+
+            .card>pre {
+                font-family: courier;
+                padding: 0.45em;
+                margin: 0 0.45em 0.45em 0.45em;
+                background: white;
+                border-radius: 0.5em;
+                border: 0.1em solid #cdb;
+            }
+
+            .card .filename {
+                padding: 0 0.45em 0 0.45em;
+                margin-bottom: 0.45em;
+            }
+
+            .card .filename>h4 {
+                display: inline;
+            }
+
+            .card .card-label {
+                font-size: 3em;
+                font-weight: bold;
+                float: right;
+                margin: 0.2em 0.2em 0 0;
+                padding-right: 0.8em;
+                z-index: 5;
+                /*-webkit-rotation: 10;*/
+            }
+
+            .card .card-label.red {
+                color: red;
+            }
+
+            .card .card-label.black {
+                color: black;
+            }
+
+            .card .card-label.heart {
+            }
+
+            .card .card-label.gold {
+                background: url(card-gold.png) no-repeat 0.8em 0.1em;
+            }
+
+            .card .card-label.wood {
+            }
+
+            .card .card-label.cup {
+            }
+        </style>
+    </head>
+    <body>
+        <h1>London Example Cards</h1>
+
+        <div class="card" id="model-class">
+            <span class="card-label gold red">A</span>
+            <h3>Getting Started</h3>
+            <pre>
+$ curl http://londonframework.org/install.sh
+$ london-start.py basic --project-name=bills
+
+$ cd bills/root
+$ source ../env/bin/activate
+$ london-admin.py run public
+Starting a instance for the service "public"...</pre>
+        </div>
+
+        <div class="card" id="model-class">
+            <h3>Project</h3>
+            <pre>
+myproject/
+  __init__.py
+  public/
+    __init__.py
+    urls.py
+    views.py
+  myapplication/
+    __init__.py
+    urls.py
+    views.py
+    models.py
+  settings.py</pre>
+        </div>
+
+        <div class="card" id="model-class">
+            <h3>Application</h3>
+            <pre>
+myapplication/
+  __init__.py
+  admin.py
+  forms.py
+  models.py
+  templates/
+  tests/
+  urls.py
+  views.py</pre>
+        </div>
+
+        <div class="card" id="model-class">
+            <h3>settings.py</h3>
+            <pre>
+import os
+DEBUG = LOCAL = True
+SERVICES = {'public': {'handler': 'london.services.HttpService',
+                       'urls': 'public.urls'}}
+TEMPLATE_DIRS = (os.path.join(ROOT_PATH, 'templates'),)
+DATABASES = {'default': {'engine': 'london.db.engines.MongoDB',
+                         'name': 'database_name'}}
+MIDDLEWARE_CLASSES = (
+    'london.apps.sites.middleware.SiteDetectMiddleware',)
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'london.apps.sites.context_processors.basic',)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static')
+INSTALLED_APPS = {'sites':'london.apps.sites', 'myapp':'myapp'}</pre>
+        </div>
+
+        <div class="card">
+            <h3>Form</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/forms.py
+            </div>
+            <pre>
+from london import forms
+from london.apps.ajax.tags import redirect_to
+
+class MyForm(forms.Form):
+    class Meta:
+        template = 'my_form.html'
+    def http_post(self, *args, **kwargs):
+        if self.is_valid():
+            do_something()
+            request.info('Something done with success!')
+            return redirect_to('/')</pre>
+            
+            <div class="filename">
+                <h4>File:</h4> myapplication/urls.py
+            </div>
+            <pre>
+from london.urls import patterns
+url_patterns = patterns('myapplication.forms',
+    (r'^my-form/$', 'MyForm', {}, 'my_form'),
+    )</pre>
+        </div>
+
+        <div class="card" id="model-class">
+            <h3>Model class</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/models.py
+            </div>
+            <pre>
+from london.db import models
+from datetime.datetime import now
+
+class Person(models.Model):
+    name = models.CharField(max_length=80)
+    creation = models.DateTimeField(default=now, blank=True)
+    age = models.IntegerField(db_index=True)
+    interests = models.ListField(blank=True, null=True)
+    wage = models.MoneyField(verbose_name='$')
+
+    def __unicode__(self):
+        return self['name']</pre>
+        </div>
+
+        <div class="card">
+            <h3>Model form</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/forms.py
+            </div>
+            <pre>
+from london import forms
+from models import Person
+
+class PersonForm(forms.ModelForm):
+    class Meta:
+        model = Person
+        template = 'person_form.html'</pre>
+            
+            <div class="filename">
+                <h4>File:</h4> myapplication/urls.py
+            </div>
+            <pre>
+from london.urls import patterns
+
+url_patterns = patterns('myapplication.forms',
+    (r'^person/add/$', 'PersonForm', {}, 'person_add'),
+    (r'^person/([\w-]+)/$', 'PersonForm', {}, 'person_edit'),
+    )</pre>
+        </div>
+
+        <div class="card">
+            <h3>View function</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/views.py
+            </div>
+            <pre>
+from london.shortcuts import get_object_or_404
+from london.templates import render_template
+from models import Person
+
+@render_template('person_details.html')
+def person_details(request, pk):
+    person = get_object_or_404(Person, pk=pk)
+    return {'person':person}</pre>
+            
+            <div class="filename">
+                <h4>File:</h4> myapplication/urls.py
+            </div>
+            <pre>
+from london.urls import patterns
+
+url_patterns = patterns('myapplication.views',
+    (r'^person/(<?pk>[\w\-]+)/$', 'person_details', {}, 'person'),
+    )</pre>
+        </div>
+
+        <div class="card">
+            <h3>URLs</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/urls.py
+            </div>
+            <pre>
+from london.urls import patterns, include
+
+url_patterns = patterns('myapplication.views',
+    (r'^person/(<?pk>[\w\-]+)/$', 'person_details', {}, 'person'),
+    (r'^bills/', 'bills.urls'),
+    )
+
+url_patterns += patterns('myapplication.forms',
+    (r'^person/add/$', 'PersonForm', {}, 'person_add'),
+    (r'^person/([\w-]+)/$', 'PersonForm', {}, 'person_edit'),
+    (r'^my-form/$', 'MyForm', {}, 'my_form'),
+    )</pre>
+            <div class="filename">
+                <h4>File:</h4> myapplication/views.py
+            </div>
+            <pre>
+from london.urls import reverse
+print(reverse('person_edit', args=('123',)))</pre>
+        </div>
+
+        <div class="card">
+            <h3>Admin</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/admin.py
+            </div>
+            <pre>
+from london.apps import admin
+from models import Person
+
+class ModulePerson(admin.CrudModule):
+    model = Person
+    list_display = ('name','age','wage',)
+    exclude = ('interests',)
+    readonly_fields = ('creation',)
+    search_fields = ('name','age',)
+
+class AppAuth(admin.AdminApplication):
+    title = 'My Application'
+    modules = (ModulePerson,)</pre>
+        </div>
+
+        <div class="card">
+            <h3>URLs with Ajax and Admin</h3>
+            <div class="filename">
+                <h4>File:</h4> public/urls.py
+            </div>
+            <pre>
+from london.urls import patterns, include
+
+from london.apps import ajax
+ajax.site.root_url = '/ajax/'
+
+from london.apps import admin
+admin.site.root_url = '/admin/'
+admin.site.load_from_applications()
+admin.site.ajax_site = ajax.site
+
+url_patterns = patterns('myapplication.views',
+    (r'^ajax/', include(ajax.site.urls)),
+    (r'^admin/', include(admin.site.urls)),
+    )</pre>
+        </div>
+
+        <div class="card">
+            <h3>Template</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/templates/person_details.html
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Piece Templating</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/templates/person_form.html
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Cache</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/views.py
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>REST</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/rest.py
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Themes</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/__init__.py
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>WebSockets</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/views.py
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Server-Sent Events</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/views.py
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Supervisor</h3>
+            <div class="filename">
+                <h4>File:</h4> deploy/supervisor.conf
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Nginx</h3>
+            <div class="filename">
+                <h4>File:</h4> deploy/nginx.conf
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Testing</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/tests/000-models.txt
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Fabric</h3>
+            <div class="filename">
+                <h4>File:</h4> fabfile.py
+            </div>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>Line Commands</h3>
+            <pre>
+$ london-admin.py run public
+$ london-admin.py shell
+$ london-admin.py runtests myapplication
+$ london-admin.py create_user
+$ london-admin.py test_london
+$ london-admin.py help
+$ london-admin.py update_dependencies</pre>
+        </div>
+
+        <div class="card">
+            <h3>Shortcuts</h3>
+            <div class="filename">
+                <h4>File:</h4> myapplication/views.py
+            </div>
+            <pre>
+from london.http import HttpResponseRedirect
+from london.shortcuts import get_object_or_404
+from london.shortcuts import json_response
+from london.shortcuts import accepted_methods
+
+def person_details(request, pk):
+    return {'person': get_object_or_404(Person, pk=pk)}
+
+@json_response
+def some_details(request):
+    return {'name':'Leticia', 'age':31}
+    
+@accepted_methods('post','put'):
+def save_it(request):
+    save_something(request.POST)
+    return HttpResponseRedirect('/')</pre>
+        </div>
+    </body>
+</html>

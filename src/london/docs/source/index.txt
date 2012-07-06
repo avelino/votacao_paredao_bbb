@@ -1,0 +1,136 @@
+Overview
+========
+
+TODO
+
+Introduction
+------------
+
+.. toctree::
+    :maxdepth: 1
+
+    design
+    getting-started
+    installing
+    running
+    simple-pages
+    interacting-with-db
+    writing-templates
+    form-controllers
+    sending-emails
+    deploying
+    philosophies
+
+Reference
+---------
+
+.. toctree::
+    :maxdepth: 1
+
+    london-start
+    london-deploy
+    db/index
+    decorators
+    forms/index
+    commands/index
+    dispatch-listeners
+    http/middleware
+    http/requests-and-responses
+    http/services-and-servers
+    settings
+    async/sse
+    templates/index
+    testing
+    urls
+    async/websockets
+
+Included Applications
+---------------------
+
+.. toctree::
+    :maxdepth: 1
+
+    apps/admin
+    apps/ajax
+    apps/auth
+    apps/cache
+    apps/contenttypes
+    apps/dblogs
+    apps/debug
+    apps/i18n
+    apps/mailing
+    apps/mockups
+    apps/notifications
+    apps/pagination
+    apps/redirects
+    apps/regional
+    apps/rest
+    apps/seo
+    apps/serialization
+    apps/sessions
+    apps/sites
+    apps/staticfiles
+    apps/themes
+
+Illustrations
+-------------
+
+- `Cheat Sheet <illustrations/cheat-sheet.html>`_
+- `Example Cards <illustrations/example-sheet.html>`_
+
+Dependencies
+------------
+
+- Tornado 2.2 or eventlet 0.9.16
+- Jinja2 2.6
+- nose 1.1.2
+- jQuery 1.5
+- simplejson 2.1.6
+- PyDispatcher 2.0.2
+- pymongo 2.1.1
+
+License
+-------
+
+London is under **The BSD License**.
+
+Copyright (c) Mochii Limited and individual contributors.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, 
+       this list of conditions and the following disclaimer.
+    
+    2. Redistributions in binary form must reproduce the above copyright 
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+
+    3. Neither the name of London Framework nor the names of its contributors may be used
+       to endorse or promote products derived from this software without
+       specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Authors
+-------
+
+London has been created by the London Framework team (take a look at our `AUTHORS <https://github.com/mochii/london/blob/master/AUTHORS.md>`_ file).
+
+Home page: http://londonframework.org/
+
+Repository: http://github.com/mochii/london/
+
+E-mail: **marinho at gmail dot com**
+

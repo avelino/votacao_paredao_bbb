@@ -1,0 +1,63 @@
+MAILING APPLICATION
+===================
+
+    >>> from london.test import assert_equal
+    >>> from london.apps import mailing
+
+The application "mailing" is an application for mailing in all ways are possible to do it, but mostly
+about SMTP mailing.
+
+But it's not about sending messages. The application is able to store a messages log, to render messages
+using templates and to send automatic message periodically.
+
+    >>> from london.apps.mailing import app_settings
+    >>> app_settings.CONNECTIONS = {
+    ...     'default': {
+    ...         'engine': 'engine_0020.FakeSmtpEngine',
+    ...         'host': '127.0.0.1',
+    ...         'port': 25,
+    ...         'user': 'me@mycompany.com',
+    ...         'password': 'secret',
+    ...         'use_tls': True,
+    ...         'subject_prefix': '[London] ',
+    ...         'fail_silently': False,
+    ...     },
+    ... }
+
+When sending in test, the mail messages are not really sent. So, to force it to do, we must force it to
+ignore the test mode.
+
+    >>> app_settings.IGNORE_TEST_MODE = True
+
+The most basic mail function just uses the default sender to send a message with the parameters it usually
+works.
+
+    >>> from london.apps.mailing import send_message
+    >>> sent = send_message(
+    ...     to=['mrdestiny@thefantasticsomeone.com'],
+    ...     subject='The first message',
+    ...     body='Hello, please send my money back.',
+    ... )
+    >>> assert_equal(sent, 1)
+
+    >>> from engine_0020 import FakeSmtpEngine
+    >>> FakeSmtpEngine.sent_messages
+
+SMTP Engine
+-----------
+
+Fake SMTP server
+
+    >>> app_settings.CONNECTIONS['default']['engine'] = 'london.apps.mailing.engines.SmtpEngine'
+
+    >>> import socket
+    >>> try:
+    ...     sent = send_message(
+    ...         to=['marinho@gmail.com'],
+    ...         subject='The first message',
+    ...         body='Hello, please send my money back.',
+    ...     )
+    ... except socket.error:
+    ...     pass
+    >>> assert_equal(sent, 1)
+

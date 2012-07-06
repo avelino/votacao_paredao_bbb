@@ -1,0 +1,35 @@
+{% base "base.html" %}
+
+{% piece "title" %}Testing Websockets{% endpiece %}
+
+{% piece "content" %}
+<a href="/string/">Just string view!</a>
+
+<form id="form-ws">
+    <input type="text"/>
+    <input type="submit" value="Send message"/>
+</form>
+
+<script>
+    $(document).ready(function(){
+        try {
+            window.ws = new WebSocket('ws://localhost:9000/ws1/');
+            console.log(['ready state', window.ws.readyState]);
+
+            window.ws.onmessage = function(e) { alert(e.data); }
+            window.ws.onopen = function(e) { alert('Just opened'); }
+            window.ws.onclose = function(e) { alert('Just closed'); }
+        } catch(e) {
+            alert(e);
+        }
+
+        $('#form-ws').submit(function(){
+            console.log(['ready state', window.ws.readyState]);
+            window.ws.send($(this).find('input[type=text]').val());
+            return false;
+        })
+
+    });
+</script>
+{% endpiece %}
+

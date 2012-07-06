@@ -1,0 +1,12 @@
+{% base "base.html" %}
+
+{% piece "title" %}{{ form.instance }} // My Documents{% endpiece %}
+
+{% piece "content" %}
+<form id="fields" method="post">
+    {{ form }}
+
+    <input type="submit" value="Save"/>
+</form>
+{% endpiece %}
+

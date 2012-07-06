@@ -1,0 +1,9 @@
+GENERIC URLS
+============
+
+Redirect
+--------
+
+Direct to template
+------------------
+

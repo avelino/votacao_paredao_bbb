@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{% container "title" %} // My Website</title>
+
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css"/>
+        {#<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>#}
+
+        {% style_tags "basic" %}
+        {% head_scripts "ajax:jquery" %}
+    </head>
+
+    <body>
+        <ul id="notifications">
+            {% container "notifications" %}
+        </ul>
+
+        <header>
+            <h1>{% container_mirror "h1", "title" %}</h1>
+
+            <div id="user-panel">
+                {% container "user_panel" %}
+            </div>
+
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/simple/">Just a simple page.</a></li>
+                <li><a href="/string/" rel="nohistory">Just string view!</a></li>
+                <li><a href="/websockets/">Testing WebSockets!</a></li>
+                <li><a href="/sse/">Testing Server-Sent Events!</a></li>
+                <li><a href="/my-documents/">My Documents</a></li>
+                <li><a href="/notifications/">Notifications</a></li>
+            </ul>
+        </header>
+
+        <div id="content">
+            {% container "content" %}
+        </div>
+
+        <footer>
+            Copyright 2011. Marinho Brandao.
+        </footer>
+
+        {% body_scripts "ajax:base,ajax:history,notifications:basic" %}
+    </body>
+</html>

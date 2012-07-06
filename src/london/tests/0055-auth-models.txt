@@ -1,0 +1,157 @@
+AUTHENTICATION MODELS
+=====================
+
+    >>> from london.test import assert_equal, assert_isinstance
+    >>> from london.http import HttpResponse, HttpResponseRedirect, HttpRequest
+
+Users
+-----
+
+    >>> from london.apps.auth.models import User
+    >>> user1 = User(_save=True, username='marta', password='1')
+
+User Groups
+-----------
+
+    >>> from london.apps.auth.models import UserGroup
+    >>> group1 = UserGroup(_save=True, name='Managers')
+
+User Permissions
+----------------
+
+    >>> from london.apps.auth.models import Permission
+    >>> perm1 = Permission(_save=True, codename='can_insert_user', name='Can Insert User', application='auth',
+    ...     model='User')
+
+Authentication
+--------------
+
+user_login TODO
+
+default_user_login TODO
+
+user_authenticate TODO
+
+default_user_authentication TODO
+
+user_logout TODO
+
+Signals
+-------
+
+    >>> from london.apps.sessions.models import Session
+
+    >>> request1 = HttpRequest({
+    ...     'PATH_INFO': '/test/',
+    ...     'REQUEST_METHOD': 'GET',
+    ... })
+    >>> request1.session = Session()
+
+user_authenticate
+
+    >>> from london.apps.auth.signals import user_authenticate
+
+    >>> class SpecialUser(object): pass
+
+    >>> def do_auth(**kwargs):
+    ...     if kwargs.get('username', None) == 'mario':
+    ...         return SpecialUser()
+    >>> user_authenticate.connect(do_auth)
+
+    >>> valid_users = filter(bool, user_authenticate.send(username='mario', password='test'))
+    >>> assert_isinstance(valid_users[0], SpecialUser)
+
+user_login
+
+    >>> from london.apps.auth.signals import user_login
+
+    >>> user1.is_authenticated = lambda: True
+
+    >>> def do_login(request, users, **kwargs):
+    ...     request.user = users[0]
+    ...     return True
+    >>> user_login.connect(do_login)
+
+    >>> assert_equal(user_login.send(request=request1, users=[user1]), [True,True])
+
+user_is_logged
+
+    >>> from london.apps.auth.signals import user_is_logged
+
+    >>> def check_logged_user(request, caller, **kwargs):
+    ...     return bool(getattr(request, 'another_user', None))
+    >>> user_is_logged.connect(check_logged_user)
+
+    >>> def view(request):
+    ...     return HttpResponse('tested')
+
+    >>> assert_equal(user_is_logged.send(request=request1, caller=view), [False])
+
+    >>> request1.another_user = True
+    >>> assert_equal(user_is_logged.send(request=request1, caller=view), [True])
+
+user_has_permission
+
+    >>> from london.apps.auth.signals import user_has_permission
+
+    >>> def check_user_permission(user, permission, **kwargs):
+    ...     return permission.startswith('can_view_')
+    >>> user_has_permission.connect(check_user_permission)
+
+    >>> assert_equal(user_has_permission.send(user=user1, permission='can_insert_details'), [False,False])
+    >>> assert_equal(user_has_permission.send(user=user1, permission='can_view_details'), [False,True])
+
+Decorators
+----------
+
+view_login_required TODO
+
+form_login_required TODO
+
+login_required TODO
+
+permission_required TODO
+
+    >>> from london.apps.auth import permission_required
+
+    >>> def view_with_permission(request):
+    ...     return HttpResponse('test')
+
+    >>> with_permission = permission_required('can_insert_details')(view_with_permission)
+    >>> resp = with_permission(request1)
+    >>> assert_isinstance(resp, HttpResponseRedirect)
+
+    >>> with_permission = permission_required('can_view_details')(view_with_permission)
+    >>> resp = with_permission(request1)
+    >>> assert_equal(resp.content, 'test')
+
+Generic Views
+-------------
+
+TODO
+
+Middleware
+----------
+
+AuthMiddleware TODO
+
+Forms
+-----
+
+TODO
+
+Password Reset
+--------------
+
+forms.ResetPasswordForm TODO
+
+views.reset_password_sent TODO
+
+forms.ResetPasswordConfirmForm TODO
+
+views.reset_password_invalid TODO
+
+views.reset_password_finished TODO
+
+views.send_token TODO
+

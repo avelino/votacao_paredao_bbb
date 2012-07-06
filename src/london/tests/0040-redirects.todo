@@ -1,0 +1,32 @@
+REDIRECTS APPLICATION
+=====================
+
+    >>> from london.apps.sites.models import Site
+    >>> if Site.query().count():
+    ...     site = Site.query()[0]
+    ... else:
+    ...     site = Site(_save=True, hostname='localhost', name='localhost', is_default=True, is_active=True)
+
+Model class
+-----------
+
+    >>> from london.apps.redirects.models import Redirect
+
+    >>> redir1 = Redirect(_save=True, url_pattern='/test-this/', url_destination='/admin/', site=site1)
+    >>> redir2 = Redirect(_save=True, url_pattern='/test-(\d+)/', url_destination='/admin/?x=$1', site=site1)
+
+Middleware
+----------
+
+    >>> from london.conf import settings
+
+TODO
+
+Generic view
+------------
+
+    >>> from london.apps.redirects.views import redirect_to
+    >>> resp = redirect_to(request, 'admin_home')
+    >>> resp.status_code
+    >>> resp.headers
+

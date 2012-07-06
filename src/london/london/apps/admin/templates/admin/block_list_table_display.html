@@ -1,0 +1,22 @@
+<table id="nav">
+    <thead>
+        <tr>
+            {% for column in columns %}
+                <th>{{ column.title }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for obj in paginator.get_list() %}
+            <tr>
+                {% for cell in obj.cells %}
+                    <td class="column-{{ cell.column.name }}">
+                        {% if cell.link %}<a href="{{ cell.link }}">{% endif %}
+                        {{ cell.display }}
+                        {% if cell.link %}</a>{% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

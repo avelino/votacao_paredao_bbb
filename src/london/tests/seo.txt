@@ -1,0 +1,13 @@
+SEO
+===
+
+Middleware classes
+------------------
+
+Empty favicon
+
+Appending slash to the URL
+
+robots.txt
+
+

@@ -1,0 +1,60 @@
+Server-Sent Events
+==================
+
+    >>> from london.test.utils import assert_equal, assert_true, assert_false
+
+London framework supports the HTML5's SSE protocol for asynchronous services. Basically this is new alternative for long-polling
+(as same as comet) techniques to supporting the server to push messages into client browser.
+
+    >>> from london import sse
+
+Launching a simple server
+-------------------------
+
+TODO (to copy server from http tests)
+
+Waiting sometime while the server starts
+
+    >>> import time
+    >>> time.sleep(2)
+
+Home view, just to check
+
+    >>> from london.http import HttpResponse
+
+    >>> def home_view(request):
+    ...     return HttpResponse('test')
+    >>> server['^/$'] = home_view
+
+    >>> resp = server.request('/')
+    >>> #resp.status_code # TODO
+
+SSE view
+
+    >>> from london.sse import server_sent_event_source
+
+    >>> def sse_view(request):
+    ...     pass
+    >>> server['^sse-handler/$'] = server_sent_event_source(sse_view)
+
+Terminate the server
+
+    >>> server.stop()
+
+References
+----------
+
+- http://dev.w3.org/html5/eventsource/
+- http://www.html5rocks.com/en/tutorials/eventsource/basics/
+- http://en.wikipedia.org/wiki/Server-sent_events
+- http://www.igvita.com/2011/08/26/server-sent-event-notifications-with-html5/
+- http://my.opera.com/WebApplications/blog/2007/05/03/scalable-server-sent-events
+- http://www.tutorialspoint.com/html5/html5_server_sent_events.htm
+- http://zeeohemgee.blogspot.com/2006/09/writing-sse-backends-with-python_09.html
+- http://labs.opera.com/news/2006/09/01/
+
+META variables can be related
+-----------------------------
+
+- 'HTTP_ACCEPT': 'text/event-stream'
+

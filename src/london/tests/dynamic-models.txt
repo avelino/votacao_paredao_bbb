@@ -1,0 +1,4 @@
+DYNAMIC MODELS
+==============
+
+This is equivalent to the Django's contenttypes and their generic relations

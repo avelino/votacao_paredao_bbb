@@ -1,0 +1,854 @@
+<!doctype html>
+<html>
+    <head>
+        <title>London Web Framework Cheat Sheet</title>
+        <style>
+            body {
+                font-family: arial;
+                font-size: 0.35cm;
+                margin: 0;
+                padding: 0;
+            }
+
+            h1 {
+                margin: 0.2em;
+            }
+
+            h2 {
+                font-size: 1em;
+                padding: 0.35em;
+                margin: 0;
+                border-radius: 0.1em 0.8em 0 0;
+                color: white;
+            }
+
+            h3 {
+                font-size: 1em;
+                margin: 0;
+                border-bottom: 0.1em dashed silver;
+            }
+
+            h4 {
+                margin: 0.7em 0 0 0;
+                font-style: italic;
+            }
+
+            .row {
+                display: table;
+                border-spacing: 0.35em 0;
+                table-space: 1em;
+                width: 100%;
+                margin-bottom: 0.35em;
+            }
+
+            .row>div {
+                display: table-cell;
+            }
+
+            .column {
+            }
+
+            .column>div {
+            }
+
+            hr.page-sep {
+                border: none;
+            }
+
+            .box {
+                border: 0.15em solid #777;
+                border-radius: 0.3em 1em 0.5em 0.5em;
+                margin-bottom: 0.35em;
+                overflow: hidden;
+            }
+
+            .box .inner {
+                margin: 0.35em;
+            }
+
+            .box.apps {
+                background: #cef;
+                border-color: #9bc;
+            }
+
+            .box.apps h2 {
+                background: #9bc;
+            }
+
+            .box.db {
+                background: #bfb;
+                border-color: #7a7;
+            }
+
+            .box.db h2 {
+                background: #7a7;
+            }
+
+            .box.shortcuts {
+                background: #bfb;
+                border-color: #7a7;
+            }
+
+            .box.shortcuts h2 {
+                background: #7a7;
+            }
+
+            .box.forms {
+                background: #fcc;
+                border-color: #c99;
+            }
+
+            .box.forms h2 {
+                background: #c99;
+            }
+
+            .box.exceptions {
+                background: #ff8;
+                border-color: #cc0;
+            }
+
+            .box.exceptions h2 {
+                background: #cc0;
+            }
+
+            .box.urls {
+                background: #eeb;
+                border-color: #aa7;
+            }
+
+            .box.urls h2 {
+                background: #aa7;
+            }
+
+            .box.tests {
+                background: #fd8;
+                border-color: #fa0;
+            }
+
+            .box.tests h2 {
+                background: #fa0;
+            }
+
+            .box.http {
+                background: #fcc;
+                border-color: #c99;
+            }
+
+            .box.http h2 {
+                background: #c99;
+            }
+
+            .box.core {
+                background: #faf;
+                border-color: #c5c;
+            }
+
+            .box.core h2 {
+                background: #c5c;
+            }
+
+            .box.services {
+                background: #faf;
+                border-color: #c5c;
+            }
+
+            .box.services h2 {
+                background: #c5c;
+            }
+
+            .box.settings {
+                background: #ccf;
+                border-color: #77f;
+            }
+
+            .box.settings h2 {
+                background: #77f;
+            }
+
+            .box.templates {
+                background: #ccf;
+                border-color: #77f;
+            }
+
+            .box.templates h2 {
+                background: #77f;
+            }
+
+            .box.others {
+                background: #ccc;
+                border-color: #999;
+            }
+
+            .box.others h2 {
+                background: #999;
+            }
+
+            .box.misc {
+                background: #fcc;
+                border-color: #c99;
+            }
+
+            .box.misc h2 {
+                background: #c99;
+            }
+
+            .module {
+            }
+
+            .module>h3, .module>div {
+                padding: 0.2em;
+            }
+
+            .module h3 {
+                background: white;
+            }
+
+            .module>div {
+                margin-left: 0.3em;
+            }
+
+            .module .inner {
+                padding: 0.35em;
+                margin: 0 0 0 0.35em;
+                overflow: hidden;
+            }
+        </style>
+
+        <style media="print">
+            body {
+                font-size: 0.25cm;
+            }
+
+            h1 {
+                display: none;
+            }
+
+            hr.page-sep {
+                page-break-after: always;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>London Cheat Sheet</h1>
+        <div class="row row1">
+            <div class="column">
+                <div class="box misc">
+                    <h2>london.* ( Random functions )</h2>
+                    <div class="inner">
+                        <div>@websockets.websocket</div>
+                        <div>@sse.server_sent_event_source</div>
+                        <div>simple.SimpleServer</div>
+                    </div>
+                </div>
+                <div class="box exceptions">
+                    <h2>london.exceptions.* ( Exception classes )</h2>
+                    <div class="inner">
+                        <div>ApplicationNotFound</div>
+                        <div>URLNotFound</div>
+                        <div>NoReverseMatch</div>
+                        <div>TemplateNotFound</div>
+                        <div>IgnoreField</div>
+                        <div>ImproperlyConfigured</div>
+                        <div>ObjectDoesNotExist</div>
+                        <div>MultipleObjectsReturned</div>
+                        <div>InvalidRelationValue</div>
+                        <div>ModelClassNotFound</div>
+                        <div>InvalidQueryClause</div>
+                        <div>DuplicatedUniqueIndex</div>
+                        <div>FieldDoesNotExist</div>
+                        <div>SuspiciousOperation</div>
+                        <div>ConnectionClosed</div>
+                        <div>ValidationError</div>
+                    </div>
+                </div>
+                <div class="box http">
+                    <h2>london.http.* ( HTTP requests/responses )</h2>
+                    <div class="inner">
+                        <div><b>HttpRequest</b></div>
+                        <div><b>Http404</b></div>
+                        <div><b>HttpResponse</b> (200)</div>
+                        <div><b>HttpResponseNotFound</b> (404)</div>
+                        <div><b>HttpResponseServerError</b> (500)</div>
+                        <div><b>HttpResponseExpectationFailed</b> (417)</div>
+                        <div><b>HttpResponseRedirect</b> (302)</div>
+                        <div><b>HttpResponsePermanentRedirect</b> (301)</div>
+                        <div><b>HttpResponseForbidden</b> (403)</div>
+                        <div><b>JsonResponse</b> (200)</div>
+                        <div><b>HttpResponseNoContent</b> (204)</div>
+                        <div><b>HttpResponseBadRequest</b> (400)</div>
+                        <div><b>HttpVersionNotSupported</b> (505)</div>
+                        <div><b>HttpResponseNotAllowed</b> (405)</div>
+                        <div><b>HttpResponseUnauthorized</b> (401)</div>
+                    </div>
+                </div>
+                <div class="box services">
+                    <h2>london.services.* ( Web Services )</h2>
+                    <div class="inner">
+                        <div>HttpService</div>
+                        <div>servers.GeventServer</div>
+                        <div>servers.EventletServer</div>
+                        <div>servers.TornadoServer</div>
+                        <div>utils.get_service</div>
+                        <div>utils.get_server</div>
+                    </div>
+                </div>
+                <div class="box templates">
+                    <h2>london.templates.* ( Template functions )</h2>
+                    <div class="inner">
+                        <div>render_to_string</div>
+                        <div>render_base</div>
+                        <div>render_to_response</div>
+                        <div>@render_template</div>
+                        <div>render_content</div>
+                        <div>context_processors.request</div>
+                        <div>signals.template_global_context</div>
+                        <div>signals.get_template_loaders</div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box db">
+                    <h2>london.db.* ( database wrapper )</h2>
+                    <div class="inner">
+                        <div class="module">
+                            <h3>engines</h3>
+                            <div class="inner">
+                                <div>MongoDB</div>
+                            </div>
+                        </div>
+                        <div class="module">
+                            <h3>models</h3>
+                            <div class="inner">
+                                <div>Model</div>
+                                <div>QuerySet</div>
+
+                                <h4>Fields</h4>
+                                <div>Field</div>
+                                <div>AnyField</div>
+                                <div>CharField</div>
+                                <div>TextField</div>
+                                <div>EmailField</div>
+                                <div>URLField</div>
+                                <div>SlugField</div>
+                                <div>PasswordField</div>
+                                <div>BooleanField</div>
+                                <div>NullBooleanField</div>
+                                <div>IntegerField</div>
+                                <div>SmallIntegerField</div>
+                                <div>PositiveIntegerField</div>
+                                <div>PositiveSmallIntegerField</div>
+                                <div>DecimalField</div>
+                                <div>MoneyField</div>
+                                <div>DateField</div>
+                                <div>DateTimeField</div>
+                                <div>TimeField</div>
+                                <div>ListField</div>
+                                <div>DictField</div>
+                                <div>ForeignKey</div>
+                                <div>ManyToManyField</div>
+                                <div>OneToOneField</div>
+                                <div>NestedListField</div>
+                            </div>
+                        </div>
+                        <div class="module">
+                            <h3>signals</h3>
+                            <div class="inner">
+                                <div>model_get</div>
+                                <div>model_list</div>
+                                <div>model_get_pk</div>
+                                <div>model_clear_pk</div>
+                                <div>model_list_delete</div>
+                                <div>model_list_count</div>
+                                <div>model_list_update</div>
+                                <div>model_pre_init</div>
+                                <div>model_post_init</div>
+                                <div>nested_model_append</div>
+                                <div>nested_model_remove</div>
+                                <div>manytomany_model_append</div>
+                                <div>manytomany_model_remove</div>
+                                <div>pre_save</div>
+                                <div>model_save</div>
+                                <div>post_save</div>
+                                <div>pre_delete</div>
+                                <div>model_delete</div>
+                                <div>post_delete</div>
+                                <div>db_post_open</div>
+                            </div>
+                        </div>
+                        <div>utils.get_model</div>
+                        <div>connections.get_connection</div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box core">
+                    <h2>london.core.* ( Core functions )</h2>
+                    <div class="inner">
+                        <div>load_apps</div>
+                        <div>get_app</div>
+                    </div>
+                </div>
+                <div class="box forms">
+                    <h2>london.forms.* ( dynamic forms )</h2>
+                    <div class="inner">
+                        <div>Form</div>
+                        <div>ModelForm</div>
+
+                        <h4>Fields</h4>
+                        <div>Field</div>
+                        <div>CharField</div>
+                        <div>DecimalField</div>
+                        <div>MoneyField</div>
+                        <div>FileField</div>
+                        <div>ImageField</div>
+                        <div>TextField</div>
+                        <div>BooleanField</div>
+                        <div>PasswordField</div>
+                        <div>EmailField</div>
+                        <div>IntegerField</div>
+                        <div>FloatField</div>
+                        <div>ChoiceField</div>
+                        <div>DateField</div>
+                        <div>TimeField</div>
+                        <div>DateTimeField</div>
+                        <div>ModelChoiceField</div>
+                        <div>ModelMultipleChoiceField</div>
+
+                        <h4>Widgets</h4>
+                        <div>Widget</div>
+                        <div>Input</div>
+                        <div>TextInput</div>
+                        <div>ColorInput</div>
+                        <div>EmailInput</div>
+                        <div>NumberInput</div>
+                        <div>HiddenInput</div>
+                        <div>CheckboxInput</div>
+                        <div>Textarea</div>
+                        <div>PasswordInput</div>
+                        <div>Select</div>
+                        <div>SelectMultiple</div>
+                        <div>CheckboxSelectMultiple</div>
+                        <div>MultiWidget</div>
+                        <div>MonthYearSelect</div>
+                        <div>DateInput</div>
+                        <div>DateTimeInput</div>
+                        <div>TimeInput</div>
+                        <div>SplitDateTimeWidget</div>
+                        <div>FileInput</div>
+                        <div>ClearableFileInput</div>
+                        <div>StaticAutoCompleteWidget</div>
+                        <div>ListByCommaInput</div>
+                        <div>ModelSelect</div>
+                        <div>ModelMultiSelect</div>
+                    </div>
+                </div>
+                <div class="box shortcuts">
+                    <h2>london.shortcuts.* ( Helpers )</h2>
+                    <div class="inner">
+                        <div>shortcuts.get_object_or_404</div>
+                        <div>@shortcuts.json_response</div>
+                        <div>@shortcuts.accepted_methods</div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box urls">
+                    <h2>london.urls.* ( URL handlers )</h2>
+                    <div class="inner">
+                        <div><b>patterns</b>('module', urls list...)</div>
+                        <div><b>include</b>('module.urls')</div>
+                        <div><b>reverse</b>('url name or view path')</div>
+                    </div>
+                </div>
+                <div class="box tests">
+                    <h2>london.test.* ( Tools for testing )</h2>
+                    <div class="inner">
+                        <div><b>client.Client</b></div>
+                        <div><b>assert_equal</b>('a', 'a')</div>
+                        <div><b>assert_equal_numbers</b>(1, '1')</div>
+                        <div><b>assert_between</b>(1, 0, 5)</div>
+                        <div><b>assert_startswith</b>('mario', 'm')</div>
+                        <div><b>assert_endswith</b>('mario', 'o')</div>
+                        <div><b>assert_not_equal</b>('x', 'y')</div>
+                        <div><b>assert_isinstance</b>(mary1, Person)</div>
+                        <div><b>assert_true</b>(1)</div>
+                        <div><b>assert_false</b>(0)</div>
+                        <div><b>assert_contains</b>([1,2,3], 2)</div>
+                        <div><b>model_has_fields</b>(Person, ['name','age'])</div>
+                        <div><b>assert_model_class_fk</b>(Person, 'group', PersonGroup)</div>
+                        <div><b>assert_free_fk</b>(Person, 'owner')</div>
+                        <div><b>assert_status_code</b>('/', 200)</div>
+                    </div>
+                </div>
+                <div class="box settings">
+                    <h2>settings.py</h2>
+                    <div class="inner">
+                        <div>ADMINS</div>
+                        <div>MANAGERS</div>
+                        <div>TEMPLATE_CONTEXT_PROCESSORS</div>
+                        <div>TEMPLATE_EXTENSIONS</div>
+                        <div>TEMPLATE_FILTERS</div>
+                        <div>DEFAULT_ENCRYPT_ALGORITHM</div>
+                        <div>TEMP_DIR</div>
+                        <div>MIDDLEWARE_CLASSES</div>
+                        <div>TEMPLATE_LOADERS</div>
+                        <div>LOCAL</div>
+                        <div>USE_L10N</div>
+                        <div>USE_I18N</div>
+                        <div>LANGUAGE_CODE</div>
+                        <div>FORMAT_MODULE_PATH</div>
+                        <div>DATE_INPUT_FORMATS</div>
+                        <div>TIME_INPUT_FORMATS</div>
+                        <div>DATETIME_INPUT_FORMATS</div>
+                        <div>DECIMAL_SEPARATOR</div>
+                        <div>DECIMAL_PLACES</div>
+                        <div>NUMBER_GROUPING</div>
+                        <div>THOUSAND_SEPARATOR</div>
+                        <div>USE_THOUSAND_SEPARATOR</div>
+                        <div>SECRET_KEY</div>
+                        <div>DEFAULT_CONTENT_TYPE</div>
+                        <div>DEFAULT_CHARSET</div>
+                        <div>FILE_UPLOAD_HANDLERS</div>
+                        <div>FILE_UPLOAD_MAX_MEMORY_SIZE</div>
+                        <div>DEFAULT_FILE_STORAGE</div>
+                        <div>FILE_UPLOAD_PERMISSIONS</div>
+                        <div>FILE_UPLOAD_TEMP_DIR</div>
+                        <div>DEFAULT_CURRENCY</div>
+                        <div>REQUIRED_PACKAGES</div>
+                        <div>COMMANDS_MODULES</div>
+                        <div>UPLOADS_URL</div>
+                        <div>UPLOADS_ROOT</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="page-sep"/>
+        <div class="row row2">
+            <div class="box apps">
+                <h2>london.apps.* ( included applications )</h2>
+                <div class="module">
+                    <h3>admin</h3>
+                    <div class="inner">
+                        <div>site</div>
+                        <div>AdminSite</div>
+                        <div>AdminApplication</div>
+                        <div>CrudModule</div>
+                        <div>context_processors.basic</div>
+
+                        <h4>settings</h4>
+                        <div>CURRENT_SITE_FILTER</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>ajax</h3>
+                    <div class="inner">
+                        <div>site</div>
+                        <div>minify_js</div>
+                        <div>minify_css</div>
+                        <div>AjaxSite</div>
+                        <div>AjaxExtension</div>
+
+                        <h4>settings</h4>
+                        <div>JS_MINIFY_FUNCTION</div>
+                        <div>CSS_MINIFY_FUNCTION</div>
+                        <div>YUICOMPRESSOR_PATH</div>
+                        <div>JAVA_PATH</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>auth</h3>
+                    <div class="inner">
+                        <div>user_authenticate</div>
+                        <div>user_logout</div>
+                        <div>user_login</div>
+                        <div>AuthenticationFailed</div>
+                        <div>signals.user_authenticate</div>
+                        <div>signals.user_login</div>
+                        <div>views.reset_password_sent</div>
+                        <div>views.reset_password_invalid</div>
+                        <div>views.reset_password_finished</div>
+                        <div>views.send_token</div>
+                        <div>forms.ResetPasswordForm</div>
+                        <div>forms.ResetPasswordConfirmForm</div>
+                        <div>models.Permission</div>
+                        <div>models.UserGroup</div>
+                        <div>models.AbstractUser</div>
+                        <div>models.User</div>
+                        <div>middleware.AuthMiddleware</div>
+                        <div>context_processors.basic</div>
+
+                        <h4>settings</h4>
+                        <div>LOGIN_URL</div>
+                        <div>LOGIN_REDIRECT_URL</div>
+                        <div>LOGOUT_REDIRECT_URL</div>
+                        <div>PASSWORD_RESET_TIMEOUT_DAYS</div>
+                        <div>PASSWORD_RESET_SEND_TOKEN</div>
+                        <div>DISABLE_DEFAULT_AUTHENTICATION</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>cache</h3>
+                    <div class="inner">
+                        <div>cache</div>
+                        <div>CacheProxy</div>
+                        <div>engines.LocalMemory</div>
+                        <div>engines.LocalFileSystem</div>
+                        <div>engines.Redis</div>
+                        <div>engines.Dummy</div>
+                        <div>middleware.ConditionalGetMiddleware</div>
+
+                        <h4>settings</h4>
+                        <div>CACHE_STORAGES</div>
+                        <div>CACHE_DEFAULT_TIMEOUT</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>contenttypes</h3>
+                    <div class="inner">
+                        <div>models.ContentType</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>dblogs</h3>
+                    <div class="inner">
+                        <div>models.DBLog</div>
+                    </div>
+                </div>
+            </div>
+            <div class="box apps">
+                <h2>london.apps.*</h2>
+                <div class="module">
+                    <h3>debug</h3>
+                    <div class="inner">
+                        <div>template "error_404"</div>
+                        <div>template "error_500"</div>
+                        <div>middleware.DebugMiddleware</div>
+
+                        <h4>settings</h4>
+                        <div>DEBUG</div>
+                        <div>PAGE_NOT_FOUND_NOTIFICATION</div>
+                        <div>SERVER_ERROR_NOTIFICATION</div>
+                        <div>ERROR_404_VIEW</div>
+                        <div>ERROR_500_VIEW</div>
+                        <div>PRINT_TRACEBACK</div>
+                    </div>
+                </div>
+                <div class="module"><h3>i18n</h3></div>
+                <div class="module">
+                    <h3>mailing</h3>
+                    <div class="inner">
+                        <div>send_message</div>
+                        <div>send_mailing_schedule</div>
+                        <div>send_message_to_admins</div>
+                        <div>send_message_to_managers</div>
+                        <div>models.MailingConfiguration</div>
+                        <div>models.MessageTemplate</div>
+                        <div>models.SentMessage</div>
+                        <div>models.MailingSchedule</div>
+                        <div>messages.EmailMessage</div>
+                        <div>messages.EmailMultiAlternatives</div>
+                        <div>signals.pre_send</div>
+                        <div>signals.post_send</div>
+
+                        <h4>settings</h4>
+                        <div>MAILING_CONNECTIONS</div>
+                        <div>MAILING_CONTEXT_FUNCTION</div>
+                        <div>MAILING_IGNORE_TEST_MODE</div>
+                        <div>MAILING_STORE_SENT_MESSAGES</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>mockups</h3>
+                    <div class="inner">
+                        <div>models.MockupView</div>
+                        <div>middleware.MockupsMiddleware</div>
+
+                        <h4>settings</h4>
+                        <div>MOCKUPS_FILES_UPLOAD_TO</div>
+                        <div>MOCKUPS_ONLY_IN_DEBUG</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>notifications</h3>
+                    <div class="inner">
+                        <div>get_pool</div>
+                        <div>get_messages</div>
+                        <div>get_messages_and_clear</div>
+                        <div>delete_message</div>
+                        <div>info</div>
+                        <div>error</div>
+                        <div>warning</div>
+                        <div>debug</div>
+                        <div>engines.SessionPool</div>
+                        <div>context_processors.basic</div>
+                        <div>middleware.NotificationsMiddleware</div>
+
+                        <h4>settings</h4>
+                        <div>NOTIFICATIONS_POOL</div>
+                        <div>NOTIFICATIONS_IN_COOKIES</div>
+                        <div>NOTIFICATIONS_IN_TEMPLATE_CONTEXT</div>
+                        <div>NOTIFICATIONS_IN_AJAX_JSON</div>
+                        <div>NOTIFICATIONS_KEEP_READ_MESSAGES</div>
+                        <div>NOTIFICATIONS_SESSION_KEY</div>
+                        <div>NOTIFICATIONS_COOKIE_PREFIX</div>
+                        <div>NOTIFICATIONS_COOKIE_MAX_AGE</div>
+                        <div>NOTIFICATIONS_COOKIE_DOMAIN</div>
+                        <div>NOTIFICATIONS_COOKIE_PATH</div>
+                    </div>
+                </div>
+            </div>
+            <div class="box apps">
+                <h2>london.apps.*</h2>
+                <div class="module">
+                    <h3>pagination</h3>
+                    <div class="inner">
+                        <div>paginator.Paginator</div>
+                        <div>context_processors.basic</div>
+                        <div>context_processors.TemplatePaginator</div>
+
+                        <h4>settings</h4>
+                        <div>PAGINATION_OBJECTS_PER_PAGE</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>redirects</h3>
+                    <div class="inner">
+                        <div>models.Redirect</div>
+                        <div>views.redirect_to</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>regional</h3>
+                    <div class="inner">
+                        <div>codes.COUNTRIES</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>rest</h3>
+                    <div class="inner">
+                        <div>RestSite</div>
+                        <div>CrudModule</div>
+                        <div>models.ExternalApplication</div>
+
+                        <h4>settings</h4>
+                        <div>REST_EXTERNAL_APPLICATION_AUTH</div>
+                        <div>REST_SEARCH_CACHE_KEY_PREFIX</div>
+                        <div>REST_SEARCH_CACHE_TIMEOUT</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>seo</h3>
+                    <div class="inner">
+                        <div>context_processors.basic</div>
+                        <div>middleware.SEOMiddleware</div>
+                        <div>middleware.RobotsMiddleware</div>
+                        <div>models.Url</div>
+                        <div>models.Rule</div>
+
+                        <h4>settings</h4>
+                        <div>APPEND_SLASH</div>
+                        <div>DEFAULT_EMPTY_FAVICON</div>
+                        <div>CANONICAL_URL_FUNCTION</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>serialization</h3>
+                    <div class="inner">
+                        <div>serialize</div>
+                        <div>deserialize</div>
+                        <div>JsonSerializer</div>
+
+                        <h4>settings</h4>
+                        <div>DEFAULT_SERIALIZER</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>sessions</h3>
+                    <div class="inner">
+                        <div>SessionDB</div>
+                        <div>middleware.SessionMiddleware</div>
+                        <div>models.Session</div>
+
+                        <h4>settings</h4>
+                        <div>SESSION_COOKIE_NAME</div>
+                        <div>SESSION_STORE_CLASS</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>sites</h3>
+                    <div class="inner">
+                        <div>context_processors.basic</div>
+                        <div>middleware.SiteDetectMiddleware</div>
+                        <div>models.Site</div>
+                        <div>models.SiteMirror</div>
+                        <div>models.detect_current_site</div>
+                        <div>views.inactive_site</div>
+
+                        <h4>settings</h4>
+                        <div>CURRENT_SITE_BY_HOST_NAME</div>
+                        <div>SITE_DETECTING_FUNCTION</div>
+                        <div>INACTIVE_SITE_VIEW</div>
+                        <div>ACCEPT_INACTIVE_SITE</div>
+                        <div>MIRROR_PERMANENT_REDIRECT</div>
+                    </div>
+                </div>
+            </div>
+            <div class="box apps">
+                <h2>london.apps.*</h2>
+                <div class="module">
+                    <h3>staticfiles</h3>
+                    <div class="inner">
+                        <div>context_processors.basic</div>
+                        <div>views.serve</div>
+                        <div>views.url_serve</div>
+                    </div>
+                </div>
+                <div class="module">
+                    <h3>themes</h3>
+                    <div class="inner">
+                        <div>site</div>
+                        <div>ThemeExtension</div>
+                        <div>context_processors.basic</div>
+                        <div>middleware.ThemeMiddleware</div>
+                        <div>models.Theme</div>
+                        <div>models.ThemeTemplate</div>
+                        <div>models.ThemeStaticFile</div>
+                        <div>signals.theme_static_files_changed</div>
+                        <div>signals.theme_static_files_deleted</div>
+                        <div>views.default_current_theme</div>
+                        <div>views.home</div>
+                        <div>views.theme</div>
+                        <div>views.theme_delete</div>
+                        <div>views.theme_rename</div>
+                        <div>views.theme_save_as</div>
+                        <div>views.theme_set_default</div>
+                        <div>views.theme_preview</div>
+                        <div>views.theme_up_file</div>
+                        <div>views.theme_edit_child</div>
+                        <div>views.theme_delete_child</div>
+                        <div>views.theme_create_template</div>
+                        <div>views.theme_create_static_file</div>
+                        <div>views.theme_download</div>
+                        <div>views.theme_import</div>
+                        <div>views.theme_upload</div>
+                        <div>views.choose_theme</div>
+
+                        <h4>settings</h4>
+                        <div>THEMES_DEFAULT_ENGINE</div>
+                        <div>THEMES_BASE_TEMPLATE</div>
+                        <div>THEMES_AVAILABLE_LOADS</div>
+                        <div>THEMES_AVAILABLE_TAGS</div>
+                        <div>THEMES_AVAILABLE_FILTERS</div>
+                        <div>THEMES_AVAILABLE_INCLUDES</div>
+                        <div>THEMES_EXCLUDED_VARIABLES</div>
+                        <div>THEMES_STATIC_NOT_FOUND_RETURNS_EMPTY</div>
+                        <div>THEMES_CHOOSING_FUNCTION</div>
+                        <div>THEMES_CURRENT_THEME_COOKIE</div>
+                        <div>THEMES_CACHE_EXPIRATION</div>
+                        <div>THEMES_ALLOW_NOT_REGISTERED</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

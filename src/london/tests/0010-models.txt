@@ -1,0 +1,210 @@
+MODELS
+======
+
+London works with a different paradigm for data persistence. Instead of the concept of
+"Object/Relational Mapping", it works with a "Persistence API". That means instead of
+just convert object to relational and vice-versa, the idea here is just to offer an API
+for persistence, and the persistence engine just receives that method and do what it
+wants about that.
+
+Of course this idea includes object/relational mappers for relational database managers,
+like PostgreSQL, MySQL, SQLite, Firebird, etc. but it must be able to support as well
+NoSQL databases, memory, XML, caching, file system, etc.
+
+We haven't plans to support every database appearing, but yes, if possible, we will do it.
+
+This test aims to test the API model, instead of the persistence itself. So, it implements
+a basic "dummy" engine to work with data in memory and just that. Specific tests will be
+test specific database managers.
+
+London's persistence API is inspired on Django's ORM, so, the most possible we can keep
+of its syntax, we will do it. Django works with the triad Model/QuerySet/Manager: the
+Model represents the data model of an object; the QuerySet represents a set of objects
+from that model, making possible to chain a couple of filters and treatments and; the
+Manager is the responsible to make the bridge between Model and QuerySet for persistence.
+
+In London we removed the Manager, believing it is not really necessary, so the pattern
+we follow tries to be a little simpler:
+
+- the Model is data model represeting just one object;
+- the QuerySet is the set of objects, with models to chain and to return an iterator
+
+And we have the Engine, responsible to listen some signals via dispatchers, assume the
+methods and return something as response.
+
+    ---------                       ------------
+    | Model |---------------------->| QuerySet |
+    ---------       implements      ------------
+                                         /
+                                        /
+                                       / sends a signal
+                                      |
+                                      V
+                              ---------------
+                              | Dispatchers |
+                              ---------------
+                               /    /     \
+               connected ->   /    /       \
+             -----------------    /         \
+            /  <- listening      /           \
+           /                    /             \
+          /                    /               \
+    ------------        ------------        ------------
+    | Engine 1 |        | Engine 2 |        | Engine 2 |
+    ------------        ------------        ------------
+
+
+The way that a Model implement its own QuerySet is neither on declarating nor on the
+initialization, but by a class method, to avoid a circular reference (it's so bad for 
+decrement the reference counter).
+
+    >>> from london.test.utils import assert_equal, assert_true, assert_false
+
+The Engine
+----------
+
+This is a fake engine, created just for test purposes and it just keeps the data in
+memory to work exactly as an engine has to work.
+
+    >>> from london.conf import settings
+    >>> settings.DATABASES = {
+    ...     'default': {
+    ...         'engine': 'engine_0010.MemoryEngine',
+    ...         'host': 'localhost',
+    ...         'port': 27017,
+    ...         'name': 'london_test_project',
+    ...     },
+    ... }
+
+    >>> from london.db import connections
+    >>> connections._connections = {}
+    >>> connection = connections.get_connection('default')
+    >>> assert_equal(connection.__class__.__name__, 'MemoryEngine')
+
+The basic of Model and QuerySet
+-------------------------------
+
+    >>> from london.db import models
+
+Declaring a basic model class
+
+    >>> class Book(models.Model):
+    ...     title = models.CharField()
+    ...     synapse = models.TextField()
+    ...     
+    ...     def __unicode__(self):
+    ...         return self['title']
+
+    >>> assert_equal(Book._meta.__class__.__name__, 'ModelMeta')
+    >>> assert_true(callable(Book.query))
+
+Query to return all objects (empty)
+
+    >>> list(Book.query())
+    []
+
+Creating the first one (and saving it)
+
+    >>> doc1 = Book(title='Romeo and Juliet', synapse='A really interesting story.', _save=True)
+
+Query to return all objects (just one)
+
+    >>> assert_equal(list(Book.query()), [doc1])
+
+Getting an object
+
+    >>> doc1_2 = Book.query().get(pk=doc1['pk'])
+    >>> assert_equal(doc1, doc1_2)
+
+Deleting an object
+
+    >>> doc1.delete()
+    >>> list(Book.query())
+    []
+
+Other queryset methods
+----------------------
+
+Deleting many objects (first creates them)
+
+    >>> doc2 = Book(title='Hamlet', synapse='Interesting story.', _save=True)
+    >>> doc3 = Book(title='Othelo', synapse='Interesting story.', _save=True)
+    >>> doc4 = Book(title='King Lear', synapse='Seems to be good.', _save=True)
+    >>> doc5 = Book(title='Twelfe Night', synapse='I dont know it', _save=True)
+    >>> assert_equal(list(Book.query()), [doc2, doc3, doc4, doc5])
+
+    >>> qs = Book.query().filter(synapse='Interesting story.')
+    >>> assert_equal(list(qs), [doc2, doc3])
+
+    >>> qs.delete()
+
+Returning as list of tuples with just some fields
+
+    >>> assert_equal(list(Book.query().values_list('pk')), [(doc4['pk'],), (doc5['pk'],)])
+
+If the same, but just one field, in a simple list result
+
+    >>> assert_equal(list(Book.query().values_list('pk', flat=True)), [doc4['pk'], doc5['pk']])
+
+Returning a list of dictonaries with just some fields
+
+    >>> assert_equal(list(Book.query().values('pk')), [{'pk':doc4['pk']}, {'pk':doc5['pk']}])
+
+Count
+
+    >>> assert_equal(Book.query().count(), 2)
+
+Exclude
+
+    >>> doc6 = Book(title='Hamlet', synapse='Adding it again', _save=True)
+    >>> doc7 = Book(title='Othelo', synapse='Adding it again', _save=True)
+    >>> assert_equal(Book.query().count(), 4)
+
+    >>> qs = Book.query().exclude(synapse='Adding it again')
+    >>> assert_equal(list(qs), [doc4, doc5])
+
+Filter if any (like an OR operation)
+
+    >>> qs = Book.query().filter_if_any(synapse='Adding it again', title='Twelfe Night')
+    >>> assert_equal(list(qs), [doc5, doc6, doc7])
+
+Exclude if any
+
+    >>> qs = Book.query().exclude_if_any(synapse='Adding it again', title='Twelfe Night')
+    >>> assert_equal(list(qs), [doc4])
+
+Create
+
+    >>> doc8 = Book.query().create(title='Romeo and Juliet', synapse='Adding it one more time')
+    >>> assert_true(doc8)
+
+Get or create
+
+    >>> doc9, new = Book.query().get_or_create(title='The Farm', synapse='Not existing')
+    >>> assert_true(doc9)
+    >>> assert_true(new)
+
+    >>> doc9, new = Book.query().get_or_create(title='The Farm', synapse='Not existing')
+    >>> assert_true(doc9)
+    >>> assert_false(new)
+
+Create or update
+
+    >>> doc10, new = Book.query().create_or_update(title='The City', values={'synapse': 'Not existing'})
+    >>> assert_true(doc10)
+    >>> assert_true(new)
+
+    >>> doc10, new = Book.query().create_or_update(title='The City', values={'synapse': 'Not existing. Really'})
+    >>> assert_true(doc10)
+    >>> assert_false(new)
+    >>> assert_equal(doc10['synapse'], 'Not existing. Really')
+
+Updating by queryset
+
+    >>> Book.query().update(synapse='The same for all')
+    >>> assert_equal(Book.query().filter(synapse='The same for all').count(), Book.query().count())
+
+Defering fields in the results # TODO
+
+Returning only some fields # TODO
+

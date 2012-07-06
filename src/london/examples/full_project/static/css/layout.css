@@ -1,0 +1,11 @@
+body {
+    font-family: arial;
+    font-size: 10pt;
+    margin: 0;
+}
+
+h1 {
+    background: #eee;
+    margin: 0 0 5px 0;
+    padding: 10px;
+}

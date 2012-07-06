@@ -1,0 +1,139 @@
+TEST UTILITIES
+==============
+
+Before everything else, the framework's test utilities must be validated, because they are used by all of the other tests
+afterwards.
+
+Assertation functions always return None. When they do not print anything, it means that they passed. If they print anything
+is because something doesn't match to their criteria. For example, **assert_equal(1, 2)** prints **1 <> 2**, but
+**assert_equal(1, 1)** prints nothing.
+
+Logical assertation functions
+-----------------------------
+
+**assert_equal**
+
+Asserts if the given arguments are equal according to Python criteria.
+
+    >>> from london.test import assert_equal
+    >>> assert_equal(1, 1)
+
+**assert_not_equal**
+
+The opposite of **assert_equal**.
+
+    >>> from london.test import assert_not_equal
+    >>> assert_not_equal(1, 2)
+
+**assert_equal_numbers**
+
+Similar to **assert_equal** but check them as numbers. That means '0' is considered equal to 0 and 0.0.
+
+    >>> from london.test import assert_equal_numbers
+    >>> assert_equal_numbers('1', 1)
+
+**assert_contains**
+
+Asserts if the first argument contains the second one. It's normal the first argument to be list, tuple or dictionary.
+
+    >>> from london.test import assert_contains
+    >>> assert_contains(list(range(10)), 7)
+
+**assert_between**
+
+Asserts if the first argument is greater or equal to the second argument and lower or equal to the third.
+
+    >>> from london.test import assert_between
+    >>> assert_between(7, 5, 9)
+
+**assert_startswith**
+
+Asserts if the first argument starts with the second argument.
+
+    >>> from london.test import assert_startswith
+    >>> assert_startswith('Brazil', 'Br')
+
+**assert_endswith**
+
+Asserts if the first argument ends with the second argument.
+
+    >>> from london.test import assert_endswith
+    >>> assert_endswith('Brazil', 'il')
+
+**assert_isinstance**
+
+    >>> from london.test import assert_isinstance
+    >>> assert_isinstance('Brazil', str)
+
+**assert_true**
+
+    >>> from london.test import assert_true
+    >>> assert_true('Brazil')
+
+**assert_false**
+
+    >>> from london.test import assert_false
+    >>> assert_false('')
+
+HTTP and Web related functions
+------------------------------
+
+**assert_status_code**
+
+    >>> from london.test import assert_status_code
+    >>> assert_status_code('/', 200)
+
+Model accuracy functions
+------------------------
+
+    >>> from london.db import models
+
+    >>> class Group(models.Model):
+    ...     name = models.CharField(max_length=30)
+
+    >>> class Person(models.Model):
+    ...     name = models.CharField(max_length=30)
+    ...     age = models.IntegerField(null=True)
+    ...     group = models.ForeignKey(Group)
+    ...     owner = models.ForeignKey(null=True, blank=True)
+
+**model_has_fields**
+
+    >>> from london.test import model_has_fields
+    >>> model_has_fields(Person, ['name','age','group'])
+    []
+
+**is_field_type**
+
+    >>> from london.test import is_field_type
+    >>> is_field_type(Person, 'name', models.CharField)
+    True
+
+    >>> is_field_type(Person, 'age', models.IntegerField)
+    True
+
+    >>> is_field_type(Person, 'group', models.ForeignKey)
+    True
+
+**is_model_class_fk**
+
+    >>> from london.test import is_model_class_fk
+    >>> is_model_class_fk(Person, 'group', Group)
+    True
+
+**assert_model_class_fk**
+
+    >>> from london.test import assert_model_class_fk
+    >>> assert_model_class_fk(Person, 'group', Group)
+
+**is_free_fk**
+
+    >>> from london.test import is_free_fk
+    >>> is_free_fk(Person, 'owner')
+    True
+
+**assert_free_fk**
+
+    >>> from london.test import assert_free_fk
+    >>> assert_free_fk(Person, 'owner')
+

@@ -1,0 +1,18 @@
+Database Persistence
+====================
+
+Overview
+--------
+
+London has its own database framework, based "Adapter" design pattern. It was designed to support multiple databases,
+multiple connections at once and varied paradigms, which means: relational and non-relational database managers.
+
+.. toctree::
+    :maxdepth: 1
+
+    models
+    querysets
+    fields
+    engines
+    signals
+

@@ -1,0 +1,54 @@
+MIDDLEWARE CLASSES
+==================
+
+    >>> from london.test.utils import assert_equal, assert_true, assert_false
+
+The London middleware is similar to the Django middleware system.
+
+When a new request comes, before to reach the view function or form it crosses each middleware classe by
+calling the method "process_request" in the order of settings.MIDDLEWARE_CLASSES.
+
+    >>> from london.conf import settings
+    >>> assert_true(settings.MIDDLEWARE_CLASSES)
+    >>> previous_settings = settings.MIDDLEWARE_CLASSES
+
+    >>> settings.MIDDLEWARE_CLASSES = ['middleware_0004.TestMiddleware']
+    >>> from london.test.client import Client
+    >>> cl = Client()
+
+The method "process_request" can make some things like chaning the request or doing a sort of databases
+actions, etc.
+
+    >>> resp = cl.get('/')
+    >>> assert_equal(resp.request.any_value, 'Marta')
+
+If that method returns a response, London just returns it, without to continue to the next middleware
+classes nor the view function or form. Otherwise, it keeps going to the next middleware class until reach
+the view.
+
+    >>> resp = cl.get('/not-existing-url/')
+    >>> assert_equal(resp.status_code, 200)
+    >>> print resp.content
+    Not found but returns
+
+After the view function or form return, the reverse order is done for the middleware classes, calling the
+method "process_response", that - if existing - must return a response (the same or another one). In the
+end, the final response is sent to the client.
+
+    >>> resp = cl.get('/')
+    >>> print resp.content
+    The content
+
+If any exception happens at any point of this process, the method "process_exception" is called to all of
+middleware classes to treat the exception.
+
+    >>> resp = cl.get('/force-exception/')
+    >>> print resp.content
+    The following error raised: Wrong URL!
+
+Each service can have its own set of middleware classes by setting the key "middleware_classes".
+
+This is just to set back the previous list of middleware classes for the next tests
+
+    >>> settings.MIDDLEWARE_CLASSES = previous_settings
+

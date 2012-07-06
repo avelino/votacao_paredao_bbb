@@ -1,0 +1,255 @@
+Settings
+========
+
+Overview
+--------
+
+The framework requires a few settings to be defined in order to run a project. In fact, a project is - in a simplistic point of
+view - a settings file and what it includes.
+
+The default way to get the project's settings when running it is via a file called **settings.py** inside the project directory.
+Nevertheless, it's possible to use a different name or import a different module in order to organize local settings, production
+settings, staging settings, etc. all of them over a default settings modules. That's up to the developer and their design.
+
+Framework settings
+------------------
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+ADMINS                          A list of system administrators, with their names and e-mail addresses (pair tuples). This
+                                for the framework to send errors messages and other related needs.
+                                Example: (('Ana Maria','ana@company.com'), ('Mr Hacker','hack@company.com'))
+COMMANDS_MODULES                
+DATE_INPUT_FORMATS              Default: ('%d/%m/%Y', '%Y-%m-%d', '%d/%m', 'today', '%d', '%n days', '%nd', '%a', '%A')
+DATETIME_INPUT_FORMATS          Default: ('%d/%m/%Y %H:%M', '%d/%m/%Y %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d %H:%M:%S')
+DECIMAL_SEPARATOR               Default: '.'
+DECIMAL_PLACES                  Default: 2
+DEFAULT_CONTENT_TYPE            Default: 'text/html'
+DEFAULT_CHARSET                 Default: 'utf-8'
+DEFAULT_CURRENCY                Default: 'GBP'
+DEFAULT_ENCRYPT_ALGORITHM       Default: 'sha1'
+DEFAULT_FILE_STORAGE            Default: 'london.core.files.storage.FileSystemStorage'
+FILE_UPLOAD_HANDLERS            
+FILE_UPLOAD_MAX_MEMORY_SIZE     Default: 2621440 # i.e. 2.5 MB
+FILE_UPLOAD_PERMISSIONS         
+FILE_UPLOAD_TEMP_DIR            
+FORMAT_MODULE_PATH              Default: 'formats'
+LANGUAGE_CODE                   Default: 'en-gb'
+LOCAL                           Default: True
+MANAGERS                        Similar to **ADMINS** but it's about the website managers (usually content managers or the
+                                owner manager).
+MIDDLEWARE_CLASSES              
+NUMBER_GROUPING                 Default: 3
+REQUIRED_PACKAGES               Default: []
+SECRET_KEY                      Default: 'PleaseDontUseThisSecretKey'
+TEMP_DIR                        Default: (Unix) '/tmp/', (Windows) 'c:/windows/temp/'
+TEMPLATE_CONTEXT_PROCESSORS     
+TEMPLATE_EXTENSIONS             
+TEMPLATE_FILTERS                
+TEMPLATE_LOADERS                
+THOUSAND_SEPARATOR              Default: ','
+TIME_INPUT_FORMATS              Default: ('%H:%M', '%H:%M:%S', 'now', '%H', '%n min', '%n hour',)
+UPLOADS_ROOT                    
+UPLOADS_URL                     
+USE_I18N                        Default: True
+USE_L10N                        Default: True
+USE_THOUSAND_SEPARATOR          Default: True
+==============================  =============================================================================================
+
+Admin settings
+^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+CURRENT_SITE_FILTER             Default: 'current_site_filter'
+==============================  =============================================================================================
+
+Ajax settings
+^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+JS_MINIFY_FUNCTION              Default: 'london.apps.ajax.minify_js'
+CSS_MINIFY_FUNCTION             Default: 'london.apps.ajax.minify_css'
+JAVA_PATH                       Default: 'java'
+YUICOMPRESSOR_PATH              Default: 'london/bin/yuicompressor-2.4.4.jar'
+==============================  =============================================================================================
+
+Auth settings
+^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+LOGIN_URL                       
+LOGIN_REDIRECT_URL              Default: '/'
+LOGOUT_REDIRECT_URL             Default: '/'
+PASSWORD_RESET_TIMEOUT_DAYS     Default: 5
+PASSWORD_RESET_SEND_TOKEN       Default: 'london.apps.auth.views.send_token'
+DISABLE_DEFAULT_AUTHENTICATION  Default: False
+==============================  =============================================================================================
+
+Cache settings
+^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+CACHE_STORAGES                  Default: {'default': {'engine':'london.apps.cache.engines.Dummy'}}
+CACHE_DEFAULT_TIMEOUT           Default: 60
+==============================  =============================================================================================
+
+Debug settings
+^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+DEBUG                           Default: True
+PAGE_NOT_FOUND_NOTIFICATION     Default: False
+SERVER_ERROR_NOTIFICATION       Default: True
+ERROR_HANDLERS                  Default: {
+                                    '404': 'london.apps.debug.views.error_404',
+                                    '500': 'london.apps.debug.views.error_500',
+                                    'other': 'london.apps.debug.views.error_other',
+                                }
+PRINT_TRACEBACK                 Default: False
+DEBUG_PROCESS_INFO              Default: False
+SEND_MEMORY_HEAP                Default: False
+==============================  =============================================================================================
+
+Mailing settings
+^^^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+MAILING_CONNECTIONS             Default: {}
+MAILING_CONTEXT_FUNCTION        Default: 'london.apps.mailing.schedule_context'
+MAILING_IGNORE_TEST_MODE        Default: 'london.apps.mailing.engines.SmtpEngine'
+MAILING_STORE_SENT_MESSAGES     Default: False
+==============================  =============================================================================================
+
+Mockups settings
+^^^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+MOCKUPS_FILES_UPLOAD_TO         Default: mockup-view-files'
+MOCKUPS_ONLY_IN_DEBUG           Default: True
+==============================  =============================================================================================
+
+Notifications settings
+^^^^^^^^^^^^^^^^^^^^^^
+
+==================================  =========================================================================================
+Setting                             Description
+==================================  =========================================================================================
+NOTIFICATIONS_POOL                  Default: 'london.apps.notifications.engines.session.SessionPool'
+NOTIFICATIONS_IN_COOKIES            Default: True
+NOTIFICATIONS_IN_TEMPLATE_CONTEXT   Default: False
+NOTIFICATIONS_IN_AJAX_JSON          Default: True
+NOTIFICATIONS_KEEP_READ_MESSAGES    Default: False
+NOTIFICATIONS_SESSION_KEY           Default: '_notifications'
+NOTIFICATIONS_COOKIE_PREFIX         Default: '_notifications_'
+NOTIFICATIONS_COOKIE_MAX_AGE        Default: None
+NOTIFICATIONS_COOKIE_DOMAIN         Default: None
+NOTIFICATIONS_COOKIE_PATH           Default: '/'
+==================================  =========================================================================================
+
+Pagination settings
+^^^^^^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+PAGINATION_OBJECTS_PER_PAGE     Default: 10
+==============================  =============================================================================================
+
+Rest settings
+^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+REST_EXTERNAL_APPLICATION_AUTH  Default: False
+REST_SEARCH_CACHE_KEY_PREFIX    Default: 'rest-search-'
+REST_SEARCH_CACHE_TIMEOUT       Default: 300 (5 minutes)
+==============================  =============================================================================================
+
+Seo settings
+^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+APPEND_SLASH                    Default: True
+DEFAULT_EMPTY_FAVICON           Default: True
+CANONICAL_URL_FUNCTION          Default: None
+==============================  =============================================================================================
+
+Serialization settings
+^^^^^^^^^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+DEFAULT_SERIALIZER              Default: 'london.apps.serialization.JsonSerializer'
+==============================  =============================================================================================
+
+Sessions settings
+^^^^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+SESSION_COOKIE_NAME             Default: 'london_session_key'
+SESSION_STORE_CLASS             Default: 'london.apps.sessions.SessionDB'
+==============================  =============================================================================================
+
+Sites settings
+^^^^^^^^^^^^^^
+
+==============================  =============================================================================================
+Setting                         Description
+==============================  =============================================================================================
+CURRENT_SITE_BY_HOST_NAME       Default: True
+SITE_DETECTING_FUNCTION         Default: 'london.apps.sites.models.detect_current_site'
+INACTIVE_SITE_VIEW              Default: 'london.apps.sites.views.inactive_site'
+ACCEPT_INACTIVE_SITE            Default: True
+MIRROR_PERMANENT_REDIRECT       Default: False
+==============================  =============================================================================================
+
+Themes settings
+^^^^^^^^^^^^^^^
+
+======================================  =====================================================================================
+Setting                                 Description
+======================================  =====================================================================================
+THEMES_DEFAULT_ENGINE                   Default: 'jinja2.Template'
+THEMES_BASE_TEMPLATE                    Default: 'base_themes.html'
+THEMES_AVAILABLE_TAGS                   Default: '*'
+THEMES_AVAILABLE_FILTERS                Default: '*'
+THEMES_AVAILABLE_INCLUDES               Default: '*'
+THEMES_EXCLUDED_VARIABLES               Default: None
+THEMES_STATIC_NOT_FOUND_RETURNS_EMPTY   Default: False
+THEMES_CHOOSING_FUNCTION                Default: 'london.apps.themes.views.choose_theme'
+THEMES_CURRENT_THEME_COOKIE             Default: '_current_theme'
+THEMES_CACHE_EXPIRATION                 Default: 1
+THEMES_ALLOW_NOT_REGISTERED             Default: False
+======================================  =====================================================================================
+
+Customized and third part settings
+----------------------------------
+
+Because the settings file is very simple and open for changes, any third part application or the project itself can define their
+own settings according to their needs. However, our recommendation about this is that settings should be the most specific as
+possible in order to avoid conflicts between different needs and coinciding setting names.
+
+For this, just add new variables with names in capital letters with their respective values to **settings.py** or an equivalent
+file in that project.
+

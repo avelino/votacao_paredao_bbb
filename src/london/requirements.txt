@@ -1,0 +1,11 @@
+#distribute==0.6.19
+#gunicorn==0.12.2
+#eventlet==0.9.16
+#-e hg+https://bitbucket.org/marinho/eventlet#egg=eventlet
+Jinja2==2.6
+nose==1.1.2
+simplejson==2.1.6
+PyDispatcher==2.0.2
+BeautifulSoup==3.2.0
+python-money==0.5
+tornado==2.2.1

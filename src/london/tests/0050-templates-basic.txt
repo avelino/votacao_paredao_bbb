@@ -1,0 +1,72 @@
+TEMPLATES BASIC FUNCTIONS
+=========================
+
+    >>> from london.test import assert_equal, assert_isinstance
+
+render_base
+-----------
+
+    >>> from london.templates import render_base
+
+Without base
+
+    >>> html = '<html><head><title>This page!</title></head><body>Test</body></html>'
+    >>> assert_equal(render_base(html, {}), html)
+
+With base
+
+    >>> from london.apps.themes.registration import register_template
+    >>> register_template("test_base", content='<html><h1>Test</h1> <div container="content"></div></html>')
+
+    >>> html = '<base template_name="test_base"/><piece name="content"><p>Message!</p></piece>'
+    >>> assert_equal(render_base(html, {}), '<html><h1>Test</h1> <div container="content"><p>Message!</p></div></html>')
+
+render_to_response
+------------------
+
+    >>> from london.templates import render_to_response
+    >>> from london.http import HttpResponse, HttpRequest
+    >>> register_template("render_to_response_test", content='<html><h1>Testing {{ name }}</h1></div></html>')
+
+    >>> request = HttpRequest({
+    ...     'PATH_INFO': '/render_to_response/',
+    ...     'REQUEST_METHOD': 'GET',
+    ... })
+    >>> resp = render_to_response(request, 'render_to_response_test', context={'name':'Elena'}, ajax_base=False,
+    ...     http_class=HttpResponse, http_kwargs={})
+
+    >>> assert_isinstance(resp, HttpResponse)
+    >>> assert_equal(resp.content, '<html><h1>Testing Elena</h1></div></html>')
+
+render_to_string
+----------------
+
+    >>> from london.templates import render_to_string
+
+    >>> ret = render_to_string('render_to_response_test', context={'name':'Elena'}, theme=None, is_ajax=False, http_kwargs=None)
+    >>> assert_equal(ret, '<html><h1>Testing Elena</h1></div></html>')
+
+render_template
+---------------
+
+    >>> from london.templates import render_template
+    >>> @render_template('render_to_response_test', http_class=HttpResponse)
+    ... def my_view(request):
+    ...     return {'name':'Tiago'}
+
+    >>> resp = my_view(request)
+
+    >>> assert_isinstance(resp, HttpResponse)
+    >>> assert_equal(resp.content, '<html><h1>Testing Tiago</h1></div></html>')
+
+render_content
+--------------
+
+    >>> from london.templates import render_content
+
+    >>> ret = render_content(content='<html><h1>Testing {{ name }}</h1></div></html>', context={'name':'Bryony'}, request=None)
+    >>> assert_equal(ret, '<html><h1>Testing Bryony</h1></div></html>')
+
+    >>> ret = render_content(content='<html><h1>Testing {{ name }}</h1></div></html>', context={'name':'Bryony'}, request=request)
+    >>> assert_equal(ret, '<html><h1>Testing Bryony</h1></div></html>')
+

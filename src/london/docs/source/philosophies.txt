@@ -1,0 +1,12 @@
+Philosophies
+============
+
+- To use the most of Signals/Listening/Dispatch pattern
+- To be the most compatible with HTML5 and CSS3 features
+- To use the most of Django good ideas (they are many)
+- To support the most of NoSQL databases
+- To be SEO friendly
+- To be cloud computing friendly
+- Everything but coding should be able to do via Admin
+- To be really easy to deploy (development/team -> staging -> production)
+

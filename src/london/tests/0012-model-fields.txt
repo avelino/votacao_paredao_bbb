@@ -1,0 +1,22 @@
+MODEL FIELDS
+============
+
+The model fields are classes that represent a data type for the framework. They can be extended by third part applications as
+well when some special requirement or treatment is necessary.
+
+Basic field types
+-----------------
+
+    >>> from london.db import models
+
+A model class with all field types
+
+    >>> class Person(models.Model):
+    ...     pass
+
+Relation field types
+--------------------
+
+File-based field types
+----------------------
+

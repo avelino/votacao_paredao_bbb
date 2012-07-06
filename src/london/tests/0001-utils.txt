@@ -1,0 +1,48 @@
+Utilities
+---------
+
+Imports
+-------
+
+    >>> from london.utils.imports import import_anything
+
+    >>> mod_london = import_anything('london')
+    >>> type(mod_london), mod_london.__name__
+    (<type 'module'>, 'london')
+
+    >>> mod_conf = import_anything('conf', from_module=mod_london)
+    >>> type(mod_conf), mod_conf.__name__
+    (<type 'module'>, 'london.conf')
+
+    >>> mod_conf = import_anything('london.conf')
+    >>> type(mod_conf), mod_conf.__name__
+    (<type 'module'>, 'london.conf')
+
+    >>> mod_settings = import_anything('london.conf.Settings')
+    >>> type(mod_settings), mod_settings.__name__
+    (<type 'type'>, 'Settings')
+
+    >>> mod_settings2 = import_anything('Settings', from_module=mod_conf)
+    >>> type(mod_settings2), mod_settings2.__name__
+    (<type 'type'>, 'Settings')
+
+    >>> mod_settings3 = import_anything('conf.Settings', from_module=mod_london)
+    >>> type(mod_settings3), mod_settings3.__name__
+    (<type 'type'>, 'Settings')
+
+Regular Expressions
+-------------------
+
+    >>> from london.utils.regexp import replace_groups
+
+    >>> replace_groups('/docs/(\d+)/rev/(\w+)/', args=(123,'abc'))
+    '/docs/123/rev/abc/'
+
+    >>> replace_groups('/docs/(?P<id>\d+)/rev/(?P<rev>\w+)/', kwargs={'rev':'abc', 'id':123})
+    '/docs/123/rev/abc/'
+
+In case of groups inside groups, just the most outside are considered
+
+    >>> replace_groups('/docs/(?P<filename>(\w+)\.(doc|odt|pages))', kwargs={'filename':'resume.doc',})
+    '/docs/resume.doc'
+

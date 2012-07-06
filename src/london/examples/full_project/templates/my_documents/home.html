@@ -1,0 +1,18 @@
+{% base "base.html" %}
+
+{% piece "title" %}Application - My Documents{% endpiece %}
+
+{% piece "content" %}
+<ul>
+    <li><a href="create/">Create a new Document</a></li>
+</ul>
+
+<h2>Document list</h2>
+
+<ul>
+    {% for doc in documents %}
+    <li><a href="/my-documents/edit/{{ doc.pk }}/">{{ doc }}</a></li>
+    {% endfor %}
+</ul>
+{% endpiece %}
+

@@ -1,0 +1,102 @@
+Model Classes
+=============
+
+A model class represents the definition of an entity containing information in common. Example: a "Person" model
+class represents those information common in person entities, so, a "John" and a "Mary" are instances of entity
+"Person". A model class "Animal" in the same way has information in common by different animals.
+
+In London a model instance can have its own single fields, taking advantage of non-relational databases. In case
+of relational databases that function is not available.
+
+The framework looks for model classes in package **models.py** in every installed application.
+
+Example of model class::
+
+    from london.db import models
+    from datetime import datetime
+    
+    class Person(models.Model):
+        class Meta:
+            ordering = ('name','age')
+
+        name = models.CharField()
+        age = models.SmallIntegerField()
+        creation = models.DateTimeField(default=datetime.now, blank=True)
+        is_manager = models.BooleanFIeld(blank=True, default=False, db_index=True)
+        
+        def __unicode__(self):
+            return self['name']
+
+The example above is a good example of a basic model class. None of those attributes and method is mandatory,
+but basically they represent as explained bellow:
+
+- The inner class **"Meta"** includes meta information about that model class, like **ordering** for setting
+  the default ordering when getting a list of objects;
+- The 4 fields defines the basic information every instance of that model class will have. It's possible to
+  use **blank** to set they as non-mandatory but usually most of declared fields are required. Their types
+  will ensure the right data will fill those fields;
+- The method **__unicode__** is declared in order to represent that object when it is converted into a unicode
+  string. Very usefull for lookup listings;
+- Finally, the **self['name']** statement represents a particular thing in this framework, which are the
+  fields as dictionary keys of an instance instead of an ordinary attribute as other frameworks use to have.
+
+Meta inner class
+^^^^^^^^^^^^^^^^
+
+The Meta inner class can include the following attributes:
+
+=======================  =====================================================================================
+Attribute                What it does
+=======================  =====================================================================================
+**abstract**             Define that model class is not persistent into the database (just for memory or
+                         definition puporses). Default **False**
+**verbose_name**         Word use instead of model class name when a verbose string is needed. That's to avoid
+                         weird display text in Admin area and other situations. Default **None**
+**verbose_name_plural**  Same as verbose_name but used for plural needs. Default **None**
+**query**                A string with dot-separated path for Queryset class in case of you have a customized
+                         one. Default: **'london.db.models.QuerySet'**
+**unique_together**      A tuple of tuples containing unique indexes to set for this model class. Each tuple
+                         contains a tuple of fields which values when going together must be unique as a set.
+                         Default **None**
+**permissions**          A tuple of tuples containing additional permissions for user access related to this
+                         model class. Each tuple must be a tuple with a pair of name and display string.
+                         Default **None**
+**ordering**             A tuple with field names to set the default ordering when a queryset of that model
+                         class returns its objects. Default **None**
+=======================  =====================================================================================
+
+Dictionary key fields
+---------------------
+
+Differently to other ORMs and database persistence libraries, London model instances refer their fields as keys
+instead of attributes. Take a look below how it works::
+
+    >>> from people.models import Person
+    
+When creating an object, the fields go as arguments, as usual::
+
+    >>> mary = Person(_save=True, name='Mary', age='30', is_manager=True)
+    
+When requested to return the field value, it must be done as instance was a dictionary::
+
+    >>> print(mary['name'])
+    Mary
+    
+When setting the field value, it must be done as for dictionaries as well::
+
+    >>> mary['name'] = 'Mary Smith'
+    >>> mary.save()
+    
+Single fields are permitted as well, even when they weren't declared before::
+
+    >>> mary['father'] = 'John Smith'
+    >>> mary.save()
+    
+The instance primary key is accessible via calculated field **'pk'** that returns the primary key as it came
+from database engine::
+
+    >>> print(mary['pk'])
+    ObjectId('4e83b9c554b4f365ae000001')
+
+Attributes can be used for temporary values, calculation, etc.
+

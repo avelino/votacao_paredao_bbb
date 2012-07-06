@@ -1,0 +1,141 @@
+Command-Line Tools
+==================
+
+General parameters
+------------------
+
+Every command supports the following parameters:
+
+======================  ==============================================================================================
+Parameter               Description
+======================  ==============================================================================================
+--settings=settings     Inform the package name to load settings
+--verbosity=1           Inform the verbosity level. 0 for empty messages, 1 for short messages and 2 for full messages
+--pdb                   Run under Python Debugger
+--version               Show London's version number
+--help                  Show help message
+======================  ==============================================================================================
+
+Included commands
+-----------------
+
+convert_mongodb_dbrefs
+^^^^^^^^^^^^^^^^^^^^^^
+
+Only for MongoDB databases. Loops on database objects changing DBRef to London's
+dictionary format for supporting additional keys.
+
+======================  ==============================================================================================
+Parameter               Description
+======================  ==============================================================================================
+--database              Database key for convertion. Default is 'default'
+--collections           Collections names separated by commas. If not given, all collections are converted
+======================  ==============================================================================================
+
+create_user
+^^^^^^^^^^^
+
+Create a user to authenticate in the system using application london.apps.auth.
+
+======================  ==============================================================================================
+Parameter               Description
+======================  ==============================================================================================
+--username              Username with no spaces
+--password              User's password
+--email                 User's e-mail address
+--is-staff              Set the user to be able to access the admin area.
+--is-superuser          Set the user to be able to have all permissions and to manage other users.
+======================  ==============================================================================================
+
+help
+^^^^
+
+Shows all available commands and their help descriptions.
+
+register_dependents
+^^^^^^^^^^^^^^^^^^^
+
+Loops database objects from declared model classes and save them forcing
+dependent register to be safe.
+
+======================  ==============================================================================================
+Parameter               Description
+======================  ==============================================================================================
+--models                Model classes names separated by commas to register dependents. If not given, all classes go.
+======================  ==============================================================================================
+
+runserver
+^^^^^^^^^
+
+Runs the given web service listening to the configured port.
+
+runtests
+^^^^^^^^
+
+Run tests containing in current project and installed applications.
+
+======================  ==============================================================================================
+Parameter               Description
+======================  ==============================================================================================
+SERVICE NAME            The first parameter is mandatory. It must be the service name. Most common is "public".
+--server                Accepts eventlet or tornado. Default is tornado.
+--disable-autoreload    Set this to disable autoreloading after changes.
+--port                  Port to listen through.
+--profiling             Run the server under a profiler to measure the running time and resources usage.
+--profiling-file        Outputs profiling to a file.
+--profiling-sort        Sets the column to sort profiling. Can be calls, cumulative, file, module, pcalls, line, name,
+                        nfl, stdname or time.
+--profiling-amount      Shows the amount of results set to this parameter.
+======================  ==============================================================================================
+
+shell
+^^^^^
+
+Open a interactive shell instance loading applications from framework and
+current project, and database connections.
+
+test_london
+^^^^^^^^^^^
+
+Run London Framework's own test suites and test scenarios. Needs to be using a
+full local copy and nose to work.
+
+update_dependencies
+^^^^^^^^^^^^^^^^^^^
+
+Installs and/or upgrades depended packages.
+
+Writing new commands
+--------------------
+
+This framework shows all its default commands and those from its included applications, additionally finding all
+Python files in installed applications, looking for a directory called **"commands"** in applications' directories.
+
+Furthermore, the setting **COMMANDS_MODULES** can be set with additional directories with customized commands.
+
+To create line commands for a specific application, you have to:
+
+- Create a package name "commands" inside the application, including an empty **__init__.py**;
+- Create the command Python files with specific names, each file with a class named **Command** inheriting from
+  **london.commands.base.BaseCommand**
+
+Example::
+
+    from optparse import make_option
+    from london.commands.base import BaseCommand
+    
+    # This class name is mandatory in order to publish your command in **london-admin.py**
+    class Command(BaseCommand):
+        """Here goes a description text."""
+    
+        option_list = BaseCommand.option_list + [
+            make_option('--username', action='store', dest='username', default=None,
+                help='This is a string parameter'),
+            make_option('--is-staff', action='store_true', dest='is_staff', default=False,
+                help='This is a boolean parameter.'),
+            ]
+    
+        def execute(self, username, is_staff, *args, **kwargs):
+            print('Username:', username)
+            print('Is Staff:', is_staff)
+

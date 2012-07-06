@@ -1,0 +1,38 @@
+{% base "base.html" %}
+
+{% piece "title" %}Testing Websockets{% endpiece %}
+
+{% piece "content" %}
+<form id="form-ws">
+    <input type="text"/>
+    <input type="submit" value="Send message"/>
+</form>
+
+<h3>Messages</h3>
+
+<ul id="messages"></ul>
+
+<script>
+    $(document).ready(function(){
+        source = new EventSource('/sse-handler/');
+        
+        source.onopen = function(e){
+            $('<li>is open.</li>').appendTo('#messages');
+        }
+        
+        source.onerror = function(e){
+            if (e.eventPhase == EventSource.CLOSED) {
+                $('<li>is closed</li>').appendTo('#messages');
+            } else {
+                $('<li>'+e.eventPhase+'</li>').appendTo('#messages');
+                console.log(e);
+            }
+        }
+        
+        source.onmessage = function(e){
+            $('<li>'+e.lastEventId+': '+e.data+'</li>').appendTo('#messages');
+        }
+    });
+</script>
+{% endpiece %}
+

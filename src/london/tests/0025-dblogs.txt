@@ -1,0 +1,60 @@
+DATABASE LOGS
+=============
+
+The application "dblogs" is responsible to log changes done on model objects and store it.
+
+    >>> import datetime
+    >>> from london.test.utils import assert_equal, assert_true, assert_false, assert_isinstance
+    >>> from london.db import models
+    >>> from london.apps.dblogs.models import DBLog
+
+Clearing the current DBLog objects
+
+    >>> DBLog.query().delete()
+
+Declaring a basic model class
+
+    >>> class Country(models.Model):
+    ...     code = models.CharField(max_length=3)
+    ...     name = models.CharField(max_length=100)
+    ...     population = models.IntegerField(null=True, blank=True)
+    ... 
+    ...     class Log:
+    ...         fields = ('code','name','population')
+
+Database log for the model class above
+
+    >>> brazil = Country(_save=True, code='BRA', name='Brazil')
+    >>> assert_equal(Country.query().count(), 1)
+
+Creating
+
+    >>> assert_equal(DBLog.query().count(), 1)
+    >>> last = DBLog.query()[0]
+    >>> assert_equal(last['object'], brazil)
+    >>> assert_isinstance(last['log_time'], datetime.datetime)
+    >>> assert_equal(last['action'], 'created')
+    >>> assert_equal(last['fields']['code'], brazil['code'])
+    >>> assert_equal(last['fields']['name'], brazil['name'])
+    >>> assert_false('population' in last['fields'])
+
+Changing
+
+    >>> brazil['population'] = 200
+    >>> brazil = brazil.save()
+
+    >>> assert_equal(DBLog.query().count(), 2)
+    >>> entries = list(DBLog.query().order_by('revision'))
+    >>> assert_equal(entries[1]['object'], brazil)
+    >>> assert_equal(entries[1]['action'], 'changed')
+    >>> assert_equal(entries[1]['fields']['population'], brazil['population'])
+
+Deleting
+
+    >>> #brazil.delete()
+
+    >>> #assert_equal(DBLog.query().count(), 3)
+    >>> #entries = list(DBLog.query())
+    >>> #assert_equal(entries[2]['object']['pk'], brazil['pk'])
+    >>> #assert_equal(entries[2]['action'], 'deleted')
+

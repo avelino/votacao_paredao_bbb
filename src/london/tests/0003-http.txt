@@ -1,0 +1,184 @@
+HTTP SERVICES
+=============
+
+    >>> import random
+    >>> from multiprocessing import Process
+    >>> from london.test import assert_equal, assert_isinstance, assert_startswith, assert_endswith, assert_true
+    >>> from london.test import assert_contains
+
+Loading applications
+--------------------
+
+    >>> from london.core import load_apps
+    >>> apps = load_apps()
+    >>> assert_true(apps)
+
+Services
+--------
+
+Service classes
+
+    >>> from london.conf import settings
+    >>> assert_equal(settings.SERVICES.keys(), ['public'])
+
+    >>> from london.services.utils import get_service
+    >>> service = get_service(settings.project_settings, 'public')
+    >>> assert_equal(service.__class__.__name__, 'HttpService')
+
+    >>> service.port
+    8000
+
+    >>> service.port = random.randint(2000,65000)
+
+Running a service to listen
+
+    >>> from london.services.servers import TornadoServer
+    >>> server = TornadoServer(service)
+    >>> process = Process(target=server.run, args=())
+    >>> process.start()
+
+Requests
+--------
+
+    >>> from london.http import WSGIRequest
+
+Raising requests from WSGI handler
+
+    >>> req1 = WSGIRequest({
+    ...     'PATH_INFO': '/dashboard/',
+    ...     'QUERY_STRING': 'sessionid=999aaa&ll=54.99,0.33',
+    ...     'REQUEST_METHOD': 'GET',
+    ...     'CONTENT_TYPE': 'text/plain',
+    ... })
+    >>> assert_equal(req1.path_info, '/dashboard/')
+    >>> assert_equal(req1.content_type, 'text/plain')
+
+QueryDict for GET
+
+    >>> assert_equal(req1.method, 'GET')
+    >>> assert_equal(str(req1.GET), "<QueryDict: {u'sessionid': [u'999aaa'], u'll': [u'54.99,0.33']}>")
+
+QueryDict for POST
+
+    >>> class FakeInput(object):
+    ...     def __init__(self, content):
+    ...         self.content = content
+    ...     def read(self, *args, **kwargs):
+    ...         return self.content
+
+    >>> req2 = WSGIRequest({
+    ...     'PATH_INFO': '/dashboard/',
+    ...     'REQUEST_METHOD': 'POST',
+    ...     'CONTENT_TYPE': 'text/plain',
+    ...     'POST_INPUT': FakeInput('sessionid=999aaa&ll=54.99,0.33'),
+    ... })
+    >>> assert_equal(req2.method, 'POST')
+    >>> assert_equal(str(req2.POST), "<QueryDict: {u'sessionid': [u'999aaa'], u'll': [u'54.99,0.33']}>")
+
+Cookies
+
+    >>> from Cookie import SimpleCookie
+    >>> req3 = WSGIRequest({
+    ...     'PATH_INFO': '/dashboard/',
+    ...     'HTTP_COOKIE': 'hblid=QV7Z4OC39IW; _ok=1872-474-10-5461; wcsid=IK7T1VAFYT;',
+    ...     'REQUEST_METHOD': 'GET',
+    ...     'CONTENT_TYPE': 'text/plain',
+    ... })
+    >>> assert_isinstance(req3.COOKIES, SimpleCookie)
+    >>> assert_equal(req3.COOKIES.keys(), ['hblid', '_ok', 'wcsid'])
+
+Method is_ajax() to recognize XMLHttpRequest
+
+    >>> assert_equal(req3.is_ajax(), False)
+
+    >>> req4 = WSGIRequest({
+    ...     'PATH_INFO': '/dashboard/',
+    ...     'REQUEST_METHOD': 'GET',
+    ...     'CONTENT_TYPE': 'text/plain',
+    ...     'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest',
+    ... })
+
+    >>> assert_equal(req4.is_ajax(), True)
+
+E-tag
+Encoding
+
+Responses
+---------
+
+    >>> from london.http import HttpResponse
+
+Test client
+
+    >>> from london.test.client import Client
+    >>> cl = Client()
+
+    >>> resp = cl.get('/')
+    >>> assert_isinstance(resp, HttpResponse)
+    >>> assert_equal(resp.read(), 'project home')
+
+Simple responses
+
+    >>> assert_equal(resp.get_status(), '200 OK')
+    >>> headers = resp.get_headers()
+    >>> #assert_contains(headers[1], ('Content-Type', 'text/html; charset=utf-8'))
+    >>> #assert_equal(headers[2][0], 'Set-Cookie')
+    >>> assert_equal(resp.mime_type, 'text/html')
+
+Mime-types for different file types
+Download
+Encoding
+
+Setting cookies
+
+    >>> import datetime
+    >>> tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
+
+    >>> resp = HttpResponse()
+    >>> assert_equal(resp.headers, {})
+
+    >>> resp.set_cookie('first-cookie', 'value here')
+
+    >>> resp.set_cookie(key='another-cookie', value='username', max_age=100, expires=60, path='/',
+    ...     domain=None, secure=False, httponly=True)
+
+    >>> h = resp.get_headers()
+    >>> assert_equal(h[0], ('Content-Type', 'text/html; charset=utf-8'))
+    >>> assert_equal(h[1], ['Set-Cookie', 'first-cookie="value here"; Path=/'])
+    >>> assert_equal(h[2][0], 'Set-Cookie')
+    >>> assert_startswith(h[2][1], 'another-cookie=username; expires=')
+    >>> assert_endswith(h[2][1], '; httponly; Max-Age=100; Path=/')
+
+HTTP Methods
+------------
+
+    >>> import httplib
+    >>> conn = httplib.HTTPConnection('localhost:%d'%service.port)
+    >>> def send(method, path, data):
+    ...     conn.request(method, path, data)
+    ...     resp = conn.getresponse()
+    ...     content = resp.read()
+    ...     return resp.getheaders(), content
+
+    >>> results = []
+
+HTTP Methods
+
+    >>> results.append(('GET', send('GET', '/not-found/', 'xxx')))
+    >>> results.append(('POST', send('POST', '/not-found/', 'xxx')))
+    >>> results.append(('PUT', send('PUT', '/not-found/', 'xxx')))
+    >>> results.append(('DELETE', send('DELETE', '/not-found/', 'xxx')))
+    >>> assert_equal(dict(results[0][1][0]).keys(), ['content-length', 'content-type'])
+
+    >>> assert_equal(send('HEAD', '/not-found/', 'xxx')[1], '')
+
+History controlled URLs
+-----------------------
+
+Hash URLs
+---------
+
+Closing the open listening process
+
+    >>> process.terminate()
+

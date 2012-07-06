@@ -1,0 +1,67 @@
+MONGODB ENGINE
+==============
+
+The MongoDB engine must be able to support the latest MongoDB release by London applications and basic functions.
+
+MongoDB is a non-relational database, based on BSON data formats, memory layer, multiple servers, sharding, replication and
+other features. A storage unity is called "collection" (equivalent to "table" in relational databases), while a record is called
+"document" (equivalent to an object).
+
+In MongoDB, the primary key is always the field "_id", which is values 24-characters-long hash string of ObjectId type.
+
+There is no normalization in MongoDB, which means the relationship between objects must be done via a weak field allowing the
+counterpart to be deleted even if there are dependents on it. Usually the foreign key are stored as DBRef, which is just a
+simple dictionary with keys "$id" and "$ref" representing respectively the counterpart's primary key and original collection.
+
+There is no integrity reference in field values as well, neither defined scheme, which means any object has its own fields set,
+and a same field in the same collection can store different data types for different objects.
+
+Our framework uses the wrapper libary **pymongo** to communicate with the database server.
+
+    >>> import pymongo
+
+    >>> from london.test import assert_equal, assert_isinstance
+
+    >>> from london.conf import settings
+    >>> settings.DATABASES = {
+    ...     'default': {
+    ...         'engine': 'london.db.engines.MongoDB',
+    ...         'host': 'localhost',
+    ...         'port': 27017,
+    ...         'name': 'london_test_project',
+    ...     },
+    ... }
+
+    >>> from london.db import connections
+    >>> connections._connections = {}
+    >>> connection = connections.get_connection('default')
+    >>> assert_equal(connection.__class__.__name__, 'MongoDB')
+
+Deleting the test database before start to ensure it is clean
+
+    >>> connection.open()
+    >>> connection._connection.drop_database(settings.DATABASES['default']['name'])
+
+Imports some model classes designed to test MongoDB engine.
+
+    >>> from models_0011 import Category, Style, Product
+
+    >>> category1 = Category(_save=True, name='Shoes')
+    >>> category2 = Category(_save=True, name='Socks')
+    >>> category3 = Category(_save=True, name='Caps')
+
+    >>> style1 = Style(_save=True, name='Sport')
+    >>> style2 = Style(_save=True, name='Cool')
+    >>> style3 = Style(_save=True, name='Running')
+    >>> style4 = Style(_save=True, name='Party')
+
+    >>> product1 = Product()
+    >>> product1['name'] = 'Good White Trainning Shoe'
+    >>> product1['tags'] = ['good','nice','unique','teen']
+    >>> assert_isinstance(product1['styles'].append(style1), Style)
+    >>> assert_isinstance(product1['styles'].append(style2), Style)
+    >>> assert_isinstance(product1.save(), Product)
+
+TODO: all the fields
+
+TODO: all the filter lookups

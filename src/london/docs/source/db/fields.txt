@@ -1,0 +1,211 @@
+Model Fields
+============
+
+A model class must define fields that will be present on instances of it. London includes model fields for the
+most common data types, and it's possible to create your own as well.
+
+Field
+^^^^^
+
+This is the base abstract field class, which all the others must inherit from. The common arguments for every
+field type are:
+
+==============  ==============================================================================================
+Argument        Description
+==============  ==============================================================================================
+null            If True, the field accepts None values and store them as they come. Default **False**
+blank           If True, the field accepts to have no value but once they have **False null**, a default value
+                is assumed. Default **False**
+default         Sets a default value, which means, if no value is given, that's is assumed. Default **None**
+verbose_name    The textual display string to come in replacement of field name in Admin area and forms.
+                Default **None**
+choices         Sets a tuple of tuples with acceptable values and their labels. Default **None**
+db_index        If True, the database manager will create an index for that field in order to inhence
+                performance. Default **False**
+unique          If True, the database manager will create a unique index for that field, which means that only
+                one instance can accept each value. Useful for key fields. Default **False**
+help_text       Sets a short but descriptive text about that field. Default **''**
+auto            Sets field supports automatically updated values. Default **None**
+==============  ==============================================================================================
+
+AnyField
+^^^^^^^^
+
+This field type supports any kind of value. For example: the object **"mary"** can use a field to store an
+integer value while another object **"john"** can use the same field to store a string or float value.
+
+BooleanField
+^^^^^^^^^^^^
+
+Field for boolean values: **True** or **False**.
+
+CharField
+^^^^^^^^^
+
+Field for string values. It's length is not mandatory for NoSQL database engines.
+
+==================  ==========================================================================================
+Argument            Description
+==================  ==========================================================================================
+max_length          If given, sets the maximum length of strings set via this field. Default **None**
+force_lower_case    If **True**, forces values to save as lower case characters.
+force_upper_case    If **True**, forces values to save as upper case characters.
+force_capitalized   If **True**, forces values to be capitalized, which means first letters upper case.
+==================  ==========================================================================================
+
+DateField
+^^^^^^^^^
+
+Field for date values.
+
+DateTimeField
+^^^^^^^^^^^^^
+
+Field for date/time values.
+
+DecimalField
+^^^^^^^^^^^^
+
+Field for decimal values, with **decimal.Decimal** instances. It converts float, integer and string values if
+they are set to it.
+
+==================  ==========================================================================================
+Argument            Description
+==================  ==========================================================================================
+max_digits          Set the whole length of values for this field, including decimal places. **Mandatory**
+decimal_places      Set how many digits are decimal. **Mandatory**
+==================  ==========================================================================================
+
+DictField
+^^^^^^^^^
+
+Field to store Python dictionaries.
+
+EmailField
+^^^^^^^^^^
+
+Field to store e-mail address formatted strings.
+
+FileField
+^^^^^^^^^
+
+Field for file storing (which in truth does not store the file itself but saves it in a directory of hard disk
+and just a reference for it in database.
+
+==================  ==========================================================================================
+Argument            Description
+==================  ==========================================================================================
+upload_to           Set the relative directory path to save files in. This is concatenated with
+                    **settings.UPLOADS_DIR** to be a absolute/real path. **Mandatory**
+storage             Set a storage instance for customized file storing.
+                    Default: **london.core.files.default_storage**
+==================  ==========================================================================================
+
+ForeignKey
+^^^^^^^^^^
+
+Field that support other object reference as a value in this object.
+
+==================  ==========================================================================================
+Argument            Description
+==================  ==========================================================================================
+related             The external reference class for validation. If 'self', supports self-referenced objects
+                    (an object of same model classe). It is recommeded to set this argument as a string
+                    formatted as **'application.ModelClass'** which is more reliable, allows crossed references
+                    and avois a few imports. If empty, any persistent object is accepted as value for this
+                    field.
+related_name        The mirror key name to represent the set of refereer objects in this class for a specific
+                    object of the other class.
+copying_fields      A tuple with field names to copy when the reference is set into an instance. This is
+                    important when that entity needs to keep data safe in itself for history purposes.
+copying_exclude     The same function of **copying_fields**, but the opposite effect: it is useful to set this
+                    field to copy all fields from foreign object apart from those cited in this argument.
+==================  ==========================================================================================
+
+ImageField
+^^^^^^^^^^
+
+Field very similar to **FileField**, but specialized on images instead of generic files.
+
+IntegerField
+^^^^^^^^^^^^
+
+Field for integer values.
+
+ListField
+^^^^^^^^^
+
+Field to store a list of values, which can be a diverse range of data types.
+
+ManyToManyField
+^^^^^^^^^^^^^^^
+
+Field for multiple association to objets of another model class.
+
+MoneyField
+^^^^^^^^^^
+
+Field for currency values.
+
+NestedListField
+^^^^^^^^^^^^^^^
+
+Field similar to **ManyToManyField** but instead of store multiple references of other objects, this field
+stores the whole objects in itself. For this the object to be added into this field must be an instance of
+a model class inheriting from **london.db.models.NestedModel**.
+
+NullBooleanField
+^^^^^^^^^^^^^^^^
+
+Very similar to **BooleanField**, but supports a third value as well: **None**. This makes it possible to
+to store a NULL value and to receive a **True** or **False** value when one of them is necessary.
+
+OneToOneField
+^^^^^^^^^^^^^
+
+Very similar to **ForeignKey** but at the other end just one object is permitted. That means a one-to-one
+relationship.
+
+PasswordField
+^^^^^^^^^^^^^
+
+Stores an encrypted password, but supports receiving a plain string, that is converted into encrypted data
+only when saved. The retrieved value from database is an instance of **london.utils.crypting.EncryptedString**
+and cannot be reverted into a plain string.
+
+PositiveIntegerField
+^^^^^^^^^^^^^^^^^^^^
+
+Very similar to **IntegerField**, but supports only **zero** or positive values (bigger than zero).
+
+PositiveSmallIntegerField
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Very similar to **PositiveIntegerField** but supports only small integer values (0 ~ 65535).
+
+SlugField
+^^^^^^^^^
+
+This is a **CharField** that converts its own value into a slug automatically to save. Usually it is used as
+key or and index.
+
+SmallIntegerField
+^^^^^^^^^^^^^^^^^
+
+Very similar to **IntegerField** but supports only small integer values (0 ~ 65535).
+
+TextField
+^^^^^^^^^
+
+This field supports long strings with no length, not compatible with indexes and not appropriate to be a key.
+
+TimeField
+^^^^^^^^^
+
+Field for time values.
+
+URLField
+^^^^^^^^
+
+This is a **CharField** to store valid URL as a string.
+

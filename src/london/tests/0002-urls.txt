@@ -1,0 +1,176 @@
+URLS
+====
+
+    >>> from london.test import assert_equal, assert_not_equal, assert_startswith, assert_false
+
+Defining URLs
+-------------
+
+    >>> from london.urls import patterns, include, resolve_url, reverse
+    >>> from london.exceptions import URLNotFound
+
+URL tree
+
+    >>> url_patterns = patterns('views_0002',
+    ...     (r'^$', 'home', {}, 'app_home'),
+    ...     (r'^dashboard/$', 'dashboard'),
+    ...     (r'^prefix/', 'prefix', {}, 'app_prefix'),
+    ...     (r'^with-param/?$', 'with_param', {'form':'my-form'}, 'app_with_param'),
+    ...     (r'^with-param/?$', 'with_param', {'form':'my-form'}, 'duplicated_url'),
+    ... )
+
+URL parsing
+
+    >>> assert_startswith(str(url_patterns[0].regexp), '<_sre.SRE_Pattern object at ')
+    >>> assert_equal(str(url_patterns[0].exp), '^$')
+    >>> assert_equal(url_patterns[0].path, ('views_0002', 'home'))
+    >>> assert_equal(url_patterns[0].params, {})
+    >>> assert_equal(url_patterns[0].name, 'app_home')
+
+    >>> try:
+    ...     resolve_url('/', url_patterns)
+    ... except URLNotFound:
+    ...     pass
+
+    >>> url, args, kwargs = resolve_url('', url_patterns)
+    >>> assert_equal(url, url_patterns[0])
+    >>> assert_false(args)
+    >>> assert_false(kwargs)
+
+    >>> try:
+    ...     resolve_url('dashboard', url_patterns)
+    ... except URLNotFound:
+    ...     pass
+
+    >>> url, args, kwargs = resolve_url('dashboard/', url_patterns)
+    >>> assert_equal(url, url_patterns[1])
+    >>> assert_false(args)
+    >>> assert_false(kwargs)
+
+    >>> url, args, kwargs = resolve_url('prefix/', url_patterns)
+    >>> assert_equal(url, url_patterns[2])
+    >>> assert_false(args)
+    >>> assert_false(kwargs)
+
+    >>> url, args, kwargs = resolve_url('prefix/sufix', url_patterns)
+    >>> assert_equal(url, url_patterns[2])
+    >>> assert_false(args)
+    >>> assert_false(kwargs)
+
+    >>> url, args, kwargs = resolve_url('with-param', url_patterns)
+    >>> assert_equal(url, url_patterns[3])
+    >>> assert_false(args)
+    >>> assert_false(kwargs)
+
+    >>> url, args, kwargs = resolve_url('with-param/', url_patterns)
+    >>> assert_equal(url, url_patterns[3])
+    >>> assert_false(args)
+    >>> assert_false(kwargs)
+    >>> assert_not_equal(url, url_patterns[4])
+
+URL with no named arguments
+
+    >>> url_patterns = patterns('views_0002',
+    ...     (r'^user/(\w+)/$', 'user', {}, 'app_user'),
+    ...     (r'^user/(\w+)/tasks/(\d{1,5})/$', 'user_task', {}, 'app_user_task'),
+    ... )
+
+    >>> try:
+    ...     resolve_url('user/ /', url_patterns)
+    ... except URLNotFound:
+    ...     pass
+
+    >>> url, args, kwargs = resolve_url('user/bryony/', url_patterns)
+    >>> assert_equal(url, url_patterns[0])
+    >>> assert_equal(args, ('bryony',))
+    >>> assert_false(kwargs)
+
+    >>> try:
+    ...     resolve_url('user/bryony/tasks/abc/', url_patterns)
+    ... except URLNotFound:
+    ...     pass
+
+    >>> try:
+    ...     resolve_url('user/bryony/tasks/123456/', url_patterns)
+    ... except URLNotFound:
+    ...     pass
+
+    >>> url, args, kwargs = resolve_url('user/bryony/tasks/12345/', url_patterns)
+    >>> assert_equal(url, url_patterns[1])
+    >>> assert_equal(args, ('bryony','12345'))
+    >>> assert_false(kwargs)
+
+URL with named arguments
+
+    >>> url_patterns = patterns('views_0002',
+    ...     (r'^search/(?P<engine>(google|yahoo|ask))/$', 'search', {}, 'app_search'),
+    ... )
+
+    >>> try:
+    ...     resolve_url('search/bing/', url_patterns)
+    ... except URLNotFound:
+    ...     pass
+
+    >>> url, args, kwargs = resolve_url('search/google/', url_patterns)
+    >>> assert_equal(url, url_patterns[0])
+    >>> assert_false(args)
+    >>> assert_equal(kwargs, {'engine': 'google'})
+
+Include
+
+    >>> class Object: pass
+
+    >>> app_views = Object()
+    >>> def home(request): return 'xx'
+    >>> app_views.home = home
+    >>> def items(request): return 'itms'
+    >>> app_views.items = items
+    >>> def item(request, arg1): return arg1
+    >>> app_views.item = item
+
+    >>> app_urls = Object()
+    >>> app_urls.url_patterns = patterns(app_views,
+    ...     (r'^$', 'home', {}, 'app_home'),
+    ...     (r'^items/$', 'items', {}, 'app_items'),
+    ...     (r'^items/(\d+)/$', 'item', {}, 'app_item'),
+    ... )
+
+    >>> views = Object()
+    >>> def home(request): return 'project home'
+    >>> views.home = home
+
+    >>> urls = Object()
+    >>> urls.url_patterns = patterns(views,
+    ...     (r'^$', 'home', {}, 'project_home'),
+    ...     (r'^app/', include(app_urls)),
+    ... )
+
+    >>> url, args, kwargs = resolve_url('app/', urls.url_patterns)
+    >>> assert_equal(url, app_urls.url_patterns[0])
+
+    >>> url, args, kwargs = resolve_url('app/items/', urls.url_patterns)
+    >>> assert_equal(url, app_urls.url_patterns[1])
+
+URL to a form will be tested on forms tests.
+
+Finding URLs
+------------
+
+    >>> from london.conf import settings
+
+    >>> settings.SERVICES = {
+    ...     'public': {
+    ...         'handler': 'london.services.HttpService',
+    ...         'urls': urls,
+    ...         'port': 8000,
+    ...     },
+    ... }
+
+Reverse function - finds a URL from its view and/or name
+
+    >>> assert_equal(reverse('project_home'), '/')
+    >>> assert_equal(reverse('app_home'), '/app/')
+    >>> assert_equal(reverse(views.home), '/')
+    >>> assert_equal(reverse(app_views.home), '/app/')
+    >>> assert_equal(reverse('app_item', args=('1',)), '/app/items/1/')
+

@@ -1,0 +1,13 @@
+{% base "admin/base.html" %}
+
+{% piece "title" %}Admin{% endpiece %}
+
+{% piece "submenu" %}{% endpiece %}
+
+{% piece "content" %}
+<ul class="modules">
+    {% for module in modules %}
+    <li><a href="{{ module.url }}">{{ module.get_title() }}</a></li>
+    {% endfor %}
+</ul>
+{% endpiece %}

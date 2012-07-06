@@ -1,0 +1,31 @@
+Installing
+==========
+
+Standard installation
+---------------------
+
+To install stable version using **pip**::
+
+    $ pip install -e git+git@github.com:mochii/london.git@stable#egg=london
+
+For the **development** version::
+
+    $ pip install -e git+git@github.com:mochii/london.git#egg=london
+
+Installing from GitHub
+----------------------
+
+To install the London's stable version from GitHub, clone our **stable** branch, using **git**::
+
+    $ git clone --branch=stable git@github.com:mochii/london.git
+
+For the current development version, clone **master** branch::
+
+    $ git clone git@github.com:mochii/london.git
+
+After cloned the repository, install it calling **setup.py**::
+
+    $ python setup.py
+
+That will install all the dependencies.
+

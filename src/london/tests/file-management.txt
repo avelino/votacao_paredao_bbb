@@ -1,0 +1,15 @@
+FILE MANAGEMENT
+===============
+
+File uploading
+--------------
+
+File storages
+-------------
+
+File downloading
+----------------
+
+Maybe CDN
+---------
+
