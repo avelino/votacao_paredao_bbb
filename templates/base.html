@@ -1,0 +1,25 @@
+﻿<!doctype html>
+<html>
+    <head>
+        <title>Votação BBB</title>
+
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css"/>
+
+        {% style_tags "basic" %}
+        {% head_scripts "ajax:jquery" %}
+    </head>
+
+    <body>
+        <header>
+            <h1>Votação BBB</h1>
+        </header>
+
+        <div id="content">
+            {% container "content" %}
+        </div>
+
+        <footer></footer>
+        {% body_scripts "ajax:base,ajax:history,notifications:basic" %}
+    </body>
+</html>
