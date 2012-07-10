@@ -31,4 +31,4 @@ main:
 	@cd $(SRCDIR)/src/ && $(SRCDIR)/src/london/london/bin/london-admin.py run public
 	@echo "OK"
 	@echo "=> Open Browser"
-	@open http://127.0.0.1/
+	@open http://127.0.0.1:8000/
