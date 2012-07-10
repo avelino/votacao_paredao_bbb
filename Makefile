@@ -29,7 +29,7 @@ main:
 	@sh $(SRCDIR)/mongodb-osx-x86_64-2.0.6/bin/mongod &
 	@echo "OK"
 	@echo "${GREEN}London Framework${NC}"
-	@cd $(SRCDIR)/src/ && london-admin.py run public
+	@$(SRCDIR)/src/london/london/bin/london-admin.py run public
 	@echo "OK"
 	@echo "=> Open Browser"
 	@open http://127.0.0.1/
