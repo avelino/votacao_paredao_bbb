@@ -1,0 +1,10 @@
+<h1>{{ object_verbose_name_plural }}</h1>
+{% if search_enabled %}{{ search_block }}{% endif %}
+
+{% set paginator = get_paginator(objects, module.list_per_page) %}
+{{ paginator.render() }}
+
+{% include list_block_template %}
+
+{{ paginator.render() }}
+

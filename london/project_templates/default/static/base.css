@@ -1,0 +1,19 @@
+body {
+    font-family: 'Ubuntu', sans-serif, arial;
+    margin: 0;
+}
+
+h1 {
+    background: #eee;
+    color: #333;
+    padding: 10px;
+    margin: 0 0 10px 0;
+    border-bottom: 2px solid silver;
+    font-family: 'Kaushan Script', cursive, arial;
+    font-size: 30pt;
+}
+
+#content {
+    margin: 20px;
+}
+

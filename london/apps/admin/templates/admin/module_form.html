@@ -1,0 +1,54 @@
+{% base "admin/base.html" %}
+
+{% piece "title" %}Editing/Adding a {{ object_verbose_name }}{% endpiece %}
+
+{% piece "module_form" %}
+<h1>Editing/Adding a {{ object_verbose_name }}</h1>
+
+<h2><span>Editing/Adding {{ object_verbose_name }}</span></h2>
+
+<form method="post" action="{{ form.path_info }}" class="module-form" {% if form.form.has_file_fields() %}enctype="multipart/form-data"{% endif %}>
+    {{ additional_links }}
+    {% if form.instance.pk %}
+    <a href="{{ admin_site.get_module_delete_url(request, form.instance) }}" class="delete" rel="forcehistory">Delete</a>
+    {% endif %}
+
+    {% block form_before_fieldsets %}{% endblock %}
+
+    {{ form }}
+
+    {% block form_after_fieldsets %}{% endblock %}
+
+    <div class="buttons">
+        {{ additional_buttons }}
+        <input type="submit" value="Save" name="save"/>
+        <input type="button" value="Save as New" id="save-as-new"/>
+    </div>
+
+    {% block form_after_buttons %}{% endblock %}
+</form>
+
+<script>var PK = '{{ form.instance.pk }}';</script>
+{{ form.media }}
+
+<script>
+    london_admin.page_type = 'module_form';
+
+    // Appends the parameter for ignoring module form in pagination links
+    $('#content .pagination a').each(function(){
+        if ($(this).attr('href').indexOf('_ignore_module_form') <= 0) {
+            var add = '_ignore_module_form=1';
+            var last_char = $(this).attr('href').substr($(this).attr('href').length-1,1);
+            if (last_char == '?' || last_char == '&') {
+                $(this).attr('href', $(this).attr('href') + add);
+            } else if ($(this).attr('href').indexOf('&') <= 0) {
+                $(this).attr('href', $(this).attr('href') + '?' + add);
+            } else {
+                $(this).attr('href', $(this).attr('href') + '&' + add);
+            }
+        }
+    });
+</script>
+
+{% endpiece %}
+
