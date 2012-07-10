@@ -18,6 +18,7 @@ main:
 	@echo "${GREEN}MongoDB${NC}"
 	@if [ ! -e "$(SRCDIR)/mongodb-osx-x86_64-2.0.6.tgz" ] ; then wget http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.0.6.tgz;fi
 	@if [ ! -e "$(SRCDIR)/mongodb-osx-x86_64-2.0.6" ] ; then tar -vxf $(SRCDIR)/mongodb-osx-x86_64-2.0.6.tgz;fi
+	@if [ ! -e "$(SRCDIR)/mongodb-osx-x86_64-2.0.6/db" ] ; then mkdir $(SRCDIR)/mongodb-osx-x86_64-2.0.6/db;fi
 	@echo "OK"
 	@echo "=> Install dependencies Python"
 	@echo "${GREEN}London Framework${NC}"
@@ -25,7 +26,7 @@ main:
 	@echo "OK"
 	@echo "=> Run"
 	@echo "${GREEN}MongoDB${NC}"
-	@$(SRCDIR)/mongodb-osx-x86_64-2.0.6/bin/mongod &
+	@$(SRCDIR)/mongodb-osx-x86_64-2.0.6/bin/mongod --dbpath $(SRCDIR)/mongodb-osx-x86_64-2.0.6/db &
 	@echo "OK"
 	@echo "${GREEN}London Framework${NC}"
 	@cd $(SRCDIR)/src/ && $(SRCDIR)/src/london/london/bin/london-admin.py run public

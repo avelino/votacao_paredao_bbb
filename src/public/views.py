@@ -18,7 +18,15 @@ from models import SEAWALL
 def report():
     p_1 = Votes.query().filter(result='1').count()
     p_2 = Votes.query().filter(result='2').count()
-    return {'p1': int((p_1*100.00)/(p_1+p_2)), 'p2': int((p_2*100.00)/(p_1+p_2))}
+
+    p1 = 0
+    if p_1 != 0:
+        p1 = int((p_1*100.00)/(p_1+p_2))
+    p2 = 0
+    if p_2 != 0:
+        p2 = int((p_2*100.00)/(p_1+p_2))
+
+    return {'p1': p1, 'p2': p2}
 
 
 class Result(forms.ModelForm):
