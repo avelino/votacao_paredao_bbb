@@ -1,4 +1,4 @@
-﻿# colors, 'cause bitches loves colors
+# colors, 'cause bitches loves colors
 RED=\033[01;31m
 GREEN=\033[01;32m
 NC=\033[01;00m
@@ -16,20 +16,19 @@ default: main
 main:
 	@echo "=> Downloading binary files"
 	@echo "${GREEN}MongoDB${NC}"
-	@wget http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.0.6.tgz
-	@mv mongodb-osx-x86_64-2.0.6.tgz $(SRCDIR)
+	#@wget http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.0.6.tgz
 	@tar -vxf mongodb-osx-x86_64-2.0.6.tgz
 	@echo "OK"
 	@echo "=> Install dependencies Python"
 	@echo "${GREEN}London Framework${NC}"
-	@python src/london/setup.py install
+	@python $(SRCDIR)/src/london/setup.py install
 	@echo "OK"
 	@echo "=> Run"
 	@echo "${GREEN}MongoDB${NC}"
-	@sh $(SRCDIR)/mongodb-osx-x86_64-2.0.6/bin/mongod &
+	@$(SRCDIR)/mongodb-osx-x86_64-2.0.6/bin/mongod &
 	@echo "OK"
 	@echo "${GREEN}London Framework${NC}"
-	@$(SRCDIR)/src/london/london/bin/london-admin.py run public
+	@cd $(SRCDIR)/src/ && $(SRCDIR)/src/london/london/bin/london-admin.py run public
 	@echo "OK"
 	@echo "=> Open Browser"
 	@open http://127.0.0.1/
