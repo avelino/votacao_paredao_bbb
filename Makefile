@@ -16,8 +16,8 @@ default: main
 main:
 	@echo "=> Downloading binary files"
 	@echo "${GREEN}MongoDB${NC}"
-	#@wget http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.0.6.tgz
-	@tar -vxf mongodb-osx-x86_64-2.0.6.tgz
+	@if [ ! -e "$(SRCDIR)/mongodb-osx-x86_64-2.0.6.tgz" ] ; then wget http://fastdl.mongodb.org/osx/mongodb-osx-x86_64-2.0.6.tgz;fi
+	@if [ ! -e "$(SRCDIR)/mongodb-osx-x86_64-2.0.6" ] ; then tar -vxf $(SRCDIR)/mongodb-osx-x86_64-2.0.6.tgz;fi
 	@echo "OK"
 	@echo "=> Install dependencies Python"
 	@echo "${GREEN}London Framework${NC}"
