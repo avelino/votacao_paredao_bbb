@@ -1,36 +1,20 @@
-﻿<!doctype html>
-  <!--[if !IE]>
-    <html lang="pt-BR">
-  <![endif]-->
-
-  <!--[if IE]>
-    <html class="ie" lang="pt-BR">
-  <![endif]-->
-
+﻿<!DOCTYPE HTML>
+<html lang="en-US">
     <head>
         <title>Votação BBB</title>
 
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="{{ STATIC_URL }}layout.css"/>
 
-        <!--[if IE]>
-          <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
-
-        {% style_tags "basic" %}
         {% head_scripts "ajax:jquery" %}
+        <script src="{{ STATIC_URL }}action.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}layout.css"/>
     </head>
 
     <body>
-        <header>
-        </header>
-
-        <div id="content">
+        <div class="main">
+          <div class="close"></div>
             {% container "content" %}
         </div>
-
-        <footer></footer>
-        {% body_scripts "ajax:base,ajax:history,notifications:basic" %}
         <!-- Salve a web, por favor -->
         <script defer src="http://sawpf.com/1.0.js"></script>
     </body>

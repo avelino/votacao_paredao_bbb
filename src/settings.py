@@ -53,7 +53,6 @@ TEMPLATE_LOADERS = (
 
 INSTALLED_APPS = (
         'london.apps.cache',
-        'london.apps.ajax',
         'london.apps.debug',
         'london.apps.seo',
         'london.apps.sessions',

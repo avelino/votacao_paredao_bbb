@@ -1,74 +1,164 @@
+/* --- Reset --- */
 
-/* --- Clean --- */
-
-html, body, div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, q, small, strong, sub, sup, tt, var, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0;	outline: 0;	font-size: 100%; vertical-align: baseline; background: transparent; } ul { list-style: none;} img { border: none; } h1, h2, h3, h4, h5, h6 { font-weight: normal; } body { line-height:1; }
-
-/* --- Universal --- */
-
-.clear  { clear: both; }
-
-body {
-  font-family: Helvetica, sans-serif;
-  font-size: 20px;
+* {
+	margin: 0;
+	padding: 0;
 }
 
-h1.top {
-  background-image: url('/static/sprite.png');
-  background-position: 0px 0px;
-  background-repeat: no-repeat;
-  padding: 15px 15px 15px 45px;
-  height: 50px;
-  font-size: 20px;
-}
-.msg {
-  font-size: 20px;
-
+.clear {
+  display: block;
 }
 
-button#vote {
-  background-image: url('/static/votacao.png');
-  background-position: 1330px 2000px;
-  width: 200px;
-  height: 40px;
-  padding: 7px;
-  border: 0px;
+/* --- Typography --- */
+
+h1 {
+	color: #545454;
+	text-transform: uppercase;
+	font: 24px 'ProximaNova-Light';
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+	margin: 15px 0 0 0;
 }
 
-.selected {
-  border: 3px orange solid !important;
+h1 strong {
+	font-family: 'ProximaNovaA-Regular';
 }
 
-.box {
-  float: left;
-  margin-left: 10px;
+h2 {
+	color: #545454;
+	font: 18px bold arial, helvetica, freesans, sans-serif;
+	margin-bottom: 10px;
 }
 
-.box p {
-  margin-top: 15px;
+p {
+	margin: 10px 0;
+	color: #545454;
+	font: 12px bold arial, helvetica, freesans, sans-serif;
 }
 
-.select_vote {
-  border: 2px solid;
+/* --- Structure --- */
+
+.main {
+	width: 620px;
+	margin: 15px;
+	border: 6px solid #EAEAEA;
 }
 
-#vote-form {
-  padding: 40px;
+.main .close {
+  position: relative;
+  display: inline-block;
+	background-image: url(/static/sprite.png);
+	background-position: 0px -91px;
+  height: 42px;
+  width: 42px;
+  right: -595px;
+  top: -30px;
 }
 
-#bar {
+/* --- Participantes --- */
+
+.participante {
+	width: 280px;
+	height: 360px;
+	display: inline-block;
+	margin: 0 10px;
+}
+
+.participante .foto {
+	width: 100%;
+	height: 244px;
+	background-image: url(/static/sprite.png);
+	border: 2px solid #e0e0e0;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+#participante-1 .foto {
+	background-position: -12px 244px;
+}
+
+#participante-2 .foto {
+	background-position: 314px 244px;
+}
+
+.participante .foto.selected {
+	border: 4px solid #FF9A00 !important;
+}
+
+/* --- Result --- */
+.result {
+  height: 300px;
+  width: 620px;
   background-image: url('/static/sprite.png');
   background-repeat: no-repeat;
   background-position: 0px -150px;
-  height: 300px;
-  width: 650px;
+	display: inline-block;
+}
+.result .foto {
+	width: 100%;
+	height: 244px;
+	overflow: hidden;
 }
 
-#p {
-  width: 200px;
+.bar {
   position: relative;
-  top: 150px;
-  left: 200px;
+  width: 260px;
+  margin: -80px 0px 0px 180px;
 }
 
-#p div {
+/* --- Form --- */
+
+#vote-form {
+  background: #f5f5f5;
+  border-top: 2px solid #CCC;
+  padding: 20px;
+  text-align: center;
 }
+
+#vote {
+	background: url(/static/btn.png) repeat-x;
+  border-radius: 3px;
+  color: #FFF;
+  border: 0px;
+  height: 40px;
+  padding: 10px;
+}
+
+/* --- Icons --- */
+
+.vote-icon {
+	width: 38px;
+	height: 38px;
+	background: url(/static/sprite.png);
+	display: inline-block;
+}
+
+/* --- Util --- */
+
+.separator {
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAKCAYAAABxJ+R3AAAAIklEQVQIHWNYsW3vfyBgAGFGEAEDTDAGiGZauX0fXIq6ygDezBtybl0/+AAAAABJRU5ErkJggg==') repeat-x 0 15px;
+	border: 0;
+	height: 10px;
+	padding: 15px 0 35px 0;
+	margin: 0 15px;
+}
+
+/* --- Fonts --- */
+
+@font-face {
+	font-family: 'ProximaNova-Light';
+	src: url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanova-light-webfont.eot?37f77b4a6813');
+	src: url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanova-light-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanova-light-webfont.woff?37f77b4a6813') format('woff'),
+		 url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanova-light-webfont.ttf?37f77b4a6813') format('truetype')
+}
+
+@font-face{
+	font-family: 'ProximaNovaA-Regular';
+	src: url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanovaalt-reg-webfont.eot?37f77b4a6813');
+	src: url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanovaalt-reg-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanovaalt-reg-webfont.woff?37f77b4a6813') format('woff'),
+		 url('http://s.glbimg.com/en/ho/static/etc/fonts/proximanovaalt-reg-webfont.ttf?37f77b4a6813') format('truetype')
+}
+

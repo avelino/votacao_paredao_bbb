@@ -7,6 +7,8 @@ from london.templates import render_template
 from london.http import HttpResponse
 from london.http import HttpResponseRedirect
 from london.http import JsonResponse
+from london.urls import reverse
+from london.apps.ajax.tags import redirect_to
 from london.sse import server_sent_event_source
 from london.apps.ajax.tags import redirect_to
 from london import forms
@@ -26,31 +28,31 @@ def report():
     if p_2 != 0:
         p2 = int((p_2*100.00)/(p_1+p_2))
 
+    if p1 == 0 and p2 == 0:
+        p1 = 50
+        p2 = 50
+
     return {'p1': p1, 'p2': p2}
 
 
-class Result(forms.ModelForm):
+class HomeForm(forms.ModelForm):
     class Meta:
-        template = 'result'
+        #template = 'result'
+        template = 'home'
         model = Votes
         fields = ('result')
-        ajax_post_json_response = True
 
     result = forms.CharField(widget=forms.HiddenInput())
 
-    def ajax_post(self, *args, **kwargs):
+    def ajax_post(self):
         return self.http_post(*args, **kwargs)
 
     def http_post(self):
-        ret = report()
-        ret['post'] = 1
-        return ret
-
-    def http_get(self):
-        return report()
+        if self.is_valid():
+            return HttpResponseRedirect(reverse('result'))
 
 
-@render_template('home')
-def HomeForm(request):
-    form = Result
+@render_template('result')
+def Result(request):
+    ret = report()
     return locals()

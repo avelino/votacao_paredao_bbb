@@ -1,19 +1,26 @@
 {% base "base.html" %}
 
 {% piece "content" %}
-  <h1 class="top">QUEM DEVE SER <strong>ELIMINADO</strong>?</h1>
+  <h1>
+    <div class="vote-icon"></div>
+    Quem deve ser <strong>eliminado</strong>?
+  </h1>
+
+  <div class="separator"></div>
 
   {% if post %}
-  <p class="msg"><strong>Parabéns!</strong> Seu voto para o <strong>Participante {{ post }}</strong> foi enviado com sucesso.</p>
+  <h2><strong>Parabéns!</strong> Seu voto para o <strong>Participante {{ post }}</strong> foi enviado com sucesso.</h2>
   {% endif %}
 
-  <div class="clear">
-    <div id="bar">
-      <div id="p">
-        <div id="p1" style="width: {{ p1 }}%; background-color: orange; color: #FFF;">{{ p1 }}%</div>
-        <div id="p2" style="width: {{ p2 }}%; background-color: #CCC; color: #FFF; float: letf;">{{ p2 }}%</div>
-      </div>
+
+  <div class="result" id="participante-1">
+    <div class="foto"></div>
+    <div class='bar'>
+      <div id="p1" style="width: {{ ret.p1 }}%; background-color: orange; color: #FFF; float: left;">{{ ret.p1 }}%</div>
+      <div id="p2" style="width: {{ ret.p2 }}%; background-color: #CCC; color: #FFF; float: left;">{{ ret.p2 }}%</div>
     </div>
   </div>
+  <div class="clear"></div>
+
 {% endpiece %}
 
