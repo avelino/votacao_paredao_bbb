@@ -1,8 +1,13 @@
 votacao_paredao_bbb
 ===================
 
-Run command: 
+Run command:
 
-    make
-    
+    $ make
+
 Install all dependence and run project
+
+
+Run all test:
+
+    $ london-admin.py runtests public
